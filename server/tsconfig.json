@@ -17,6 +17,6 @@
     "paths": {
       "@/*": ["*"]
     },
-    "baseUrl": "."
+    "baseUrl": "src"
   }
 }
