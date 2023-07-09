@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  ACCESS_ADMIN
+  ACCESS_ADMIN_RDC
+  ACCESS_ADMIN_SNACK
+  ACCESS_FUNC_RDC
+  ACCESS_FUNC_SNACK
+}
+
+model User {
+  id_user     String         @id @default(uuid())
+  username    String         @unique
+  email       String         @unique
+  password    String
+  role        Role
+  enterprises Company[]
+  jobs        Construction[]
+  leader      Collaborator[]
+  production  Production[]
+}
+
+model Company {
+  id_company   String         @id @default(uuid())
+  userId_user  String
+  company_name String         @unique
+  jobs         Construction[]
+  user_idUser  User           @relation(fields: [userId_user], references: [id_user])
+}
+
+model Construction {
+  id_construction   String         @id @default(uuid())
+  code_construction String         @unique
+  name_construction String
+  userId_user       String
+  companyId_company String
+  user_idUser       User           @relation(fields: [userId_user], references: [id_user])
+  company_idCompany Company        @relation(fields: [companyId_company], references: [id_company])
+  leader            Collaborator[]
+  service           Service[]
+}
+
+model Garden {
+  id_garden String @id @default(uuid())
+  name      String
+}
+
+model SubField {
+  id_subField String @id @default(uuid())
+  name        String
+}
+
+model Measurement {
+  id_measurement   String @id @default(uuid())
+  name_measurement String
+  symbol           String
+}
+
+model Service {
+  id_service                  String       @id @default(uuid())
+  code_service                String       @unique
+  name_service                String
+  code_totvs                  String
+  activity                    String
+  garden                      String
+  subfield                    String
+  foreseen                    String
+  undMeasure                  String
+  advance                     String
+  constructionId_construction String
+  collaboratorId_collaborator String
+  construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
+  collaborator_idCollaborator Collaborator @relation(fields: [collaboratorId_collaborator], references: [id_collaborator])
+  disabled_service            Boolean      @default(false)
+  production                  Production[]
+}
+
+model Production {
+  id_production        String   @id @default(uuid())
+  performed_production String
+  date_production      String
+  note                 String?
+  photograph           String
+  userId_user          String
+  serviceId_service    String
+  leader               User     @relation(fields: [userId_user], references: [id_user])
+  service_idService    Service  @relation(fields: [serviceId_service], references: [id_service])
+  createdAt            DateTime @default(now())
+}
+
+model MealTime {
+  id_mealTime String @id @default(uuid())
+  start_time  String // multiple by 100 or divide by 100
+  end_time    String // multiple by 100 or divide by 100
+  name        String
+}
+
+model MonitoringUnit {
+  id_monitoringUnit String @id @default(uuid())
+  code_monitoring   String
+  name              String
+  description       String
+}
+
+model Third {
+  id_third                    String  @id @default(uuid())
+  code_third                  String  @unique
+  name_third                  String
+  disabled_third              Boolean @default(false)
+  construction_idConstruction String
+  snack                       Snack[]
+}
+
+model Collaborator {
+  id_collaborator             String       @id @default(uuid())
+  matriculation               String       @unique
+  name_collaborator           String
+  office_collaborator         String
+  disabled_collaborator       Boolean      @default(false)
+  responsible                 Boolean
+  userId_user                 String
+  constructionId_construction String
+  snack                       Snack[]
+  user_idUser                 User         @relation(fields: [userId_user], references: [id_user])
+  construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
+  service                     Service[]
+}
+
+model Snack {
+  id_snack                    String       @id @default(uuid())
+  date_snack                  DateTime
+  type_snack                  String
+  thirdId_third               String
+  collaboratorId_collaborator String
+  third_idThird               Third        @relation(fields: [thirdId_third], references: [id_third])
+  collaborator_idCollaborator Collaborator @relation(fields: [collaboratorId_collaborator], references: [id_collaborator])
+}
