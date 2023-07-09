@@ -1,0 +1,3 @@
+src/external/repositories/postgres/helpers/prisma/schema.prisma
+src/external/repositories/postgres/helpers/prisma/migrations/migration_lock.toml
+src/external/repositories/postgres/helpers/prisma/migrations/**/*.sql
