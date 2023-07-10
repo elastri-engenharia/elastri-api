@@ -67,4 +67,58 @@ export default (router: Router) => {
       ? res.status(200).json({ construction })
       : res.status(400).json({ message: "Unable to register third." })
   })
+
+  router.patch("/thirds/:id_third/update", async (req, res) => {
+    const { id_third } = req.params
+
+    const {
+      code_third,
+      name_third,
+      disabled_third,
+      construction_idConstruction,
+    } = req.body
+
+    const thirdIsInNotUse = await prisma.third.findFirst({
+      where: {
+        NOT: {
+          id_third,
+        },
+        AND: {
+          code_third,
+        },
+      },
+    })
+
+    const constructionOrNotFound = await prisma.construction.findFirst({
+      where: {
+        id_construction: construction_idConstruction,
+      },
+    })
+
+    if (thirdIsInNotUse)
+      return res.status(400).json({ message: "Sorry code_third is in use." })
+
+    if (!constructionOrNotFound)
+      return res.status(400).json({ message: "Construction not found." })
+
+    const updatedThird = await prisma.third.update({
+      where: {
+        id_third,
+      },
+      data: {
+        code_third,
+        name_third,
+        disabled_third,
+        construction_idConstruction: {
+          connect: {
+            id_construction: construction_idConstruction,
+          },
+        },
+      },
+    })
+
+    return updatedThird
+      ? res.status(200).json({ updatedThird })
+      : res.status(400).json({ message: "Unable to update this third." })
+  })
 }
