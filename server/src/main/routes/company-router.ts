@@ -25,4 +25,27 @@ export default (router: Router) => {
       ? res.status(200).json({ company })
       : res.status(400).json({ message: "Company not found." })
   })
+
+  router.post("/companys/create", async (req, res) => {
+    const { company_name } = req.body
+
+    const companyOrNotFound = await prisma.company.findFirst({
+      where: {
+        company_name,
+      },
+    })
+
+    if (companyOrNotFound)
+      return res.status(400).json({ message: "Company already exists." })
+
+    const company = await prisma.company.create({
+      data: {
+        company_name,
+      },
+    })
+
+    return company
+      ? res.status(201).json({ company })
+      : res.status(400).json({ message: "Unable to register company." })
+  })
 }
