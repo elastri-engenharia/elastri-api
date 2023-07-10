@@ -11,24 +11,26 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  ACCESS_ADMIN
-  ACCESS_ADMIN_RDC
-  ACCESS_ADMIN_SNACK
-  ACCESS_FUNC_RDC
-  ACCESS_FUNC_SNACK
+  ADMIN // system administrator
+  ACCESS_ADMIN // matrix user 
+  ACCESS_ADMIN_RDC // collaborator with admin access permission for the RDC
+  ACCESS_ADMIN_SNACK // collaborator with admin access permission for the SNACK
+  ACCESS_FUNC_RDC // collaborator with employee access permission fot the RDC
+  ACCESS_FUNC_SNACK // collaborator with employee access permission fot the SNACK
+  ACCESS_VISITOR_SNACK // visitor with read access permission to SNACK
 }
 
 model User {
-  id_user    String         @id @default(uuid())
-  username   String         @unique
-  email      String         @unique
-  password   String
-  role       Role
-  jobs       Construction[]
-  leader     Collaborator[]
-  production Production[]
-  Company    Company[]
+  id_user                     String         @id @default(uuid())
+  username                    String         @unique
+  email                       String         @unique
+  password                    String
+  role                        Role
+  constructionId_construction String?
+  Construction                Construction?  @relation(fields: [constructionId_construction], references: [id_construction])
+  leader                      Collaborator[]
+  production                  Production[]
+  Company                     Company[]
 }
 
 model Company {
@@ -42,9 +44,8 @@ model Construction {
   id_construction   String         @id @default(uuid())
   code_construction String         @unique
   name_construction String
-  userId_user       String
   companyId_company String
-  user_idUser       User           @relation(fields: [userId_user], references: [id_user])
+  users             User[]
   company_idCompany Company        @relation(fields: [companyId_company], references: [id_company])
   leader            Collaborator[]
   service           Service[]
