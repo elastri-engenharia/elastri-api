@@ -23,6 +23,7 @@ export default (router: Router) => {
       ? res.status(200).json({ garden })
       : res.status(400).json({ message: "Garden not found." })
   })
+
   router.post("/gardens/create", async (req, res) => {
     const { name } = req.body
 
@@ -44,5 +45,38 @@ export default (router: Router) => {
     return garden
       ? res.status(201).json({ garden })
       : res.status(400).json({ message: "Unable to register garden." })
+  })
+
+  router.patch("/gardens/:id_garden/update", async (req, res) => {
+    const { id_garden } = req.params
+
+    const { name } = req.body
+
+    const gardenOrNotFound = await prisma.garden.findFirst({
+      where: {
+        NOT: {
+          id_garden,
+        },
+        AND: {
+          name,
+        },
+      },
+    })
+
+    if (gardenOrNotFound)
+      return res.status(400).json({ message: "Sorry name is in use." })
+
+    const garden = await prisma.garden.update({
+      where: {
+        id_garden,
+      },
+      data: {
+        name,
+      },
+    })
+
+    return garden
+      ? res.status(200).json({ garden })
+      : res.status(400).json({ message: "Unable to update this garden." })
   })
 }
