@@ -26,4 +26,42 @@ export default (router: Router) => {
         : res.status(400).json({ message: "Construction not found." })
     },
   )
+
+  router.post("/constructions/create", async (req, res) => {
+    const { code_construction, name_construction, company_idCompany } = req.body
+
+    const constructionOrNotFound = await prisma.construction.findFirst({
+      where: {
+        code_construction,
+      },
+    })
+
+    const companyOrNotFound = await prisma.company.findFirst({
+      where: {
+        id_company: company_idCompany,
+      },
+    })
+
+    if (constructionOrNotFound)
+      return res.status(400).json({ message: "Construction already exists." })
+
+    if (!companyOrNotFound)
+      return res.status(404).json({ message: "Company not found." })
+
+    const construction = await prisma.construction.create({
+      data: {
+        code_construction,
+        name_construction,
+        company_idCompany: {
+          connect: {
+            id_company: company_idCompany,
+          },
+        },
+      },
+    })
+
+    return construction
+      ? res.status(201).json({ construction })
+      : res.status(400).json({ message: "Unable to register construction." })
+  })
 }
