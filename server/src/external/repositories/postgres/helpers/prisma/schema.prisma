@@ -49,6 +49,7 @@ model Construction {
   company_idCompany Company        @relation(fields: [companyId_company], references: [id_company])
   leader            Collaborator[]
   service           Service[]
+  Third             Third[]
 }
 
 model Garden {
@@ -114,11 +115,12 @@ model MonitoringUnit {
 }
 
 model Third {
-  id_third                    String  @id @default(uuid())
-  code_third                  String  @unique
+  id_third                    String       @id @default(uuid())
+  code_third                  String       @unique
   name_third                  String
-  disabled_third              Boolean @default(false)
-  construction_idConstruction String
+  disabled_third              Boolean      @default(false)
+  constructionId_construction String
+  construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
   snack                       Snack[]
 }
 
