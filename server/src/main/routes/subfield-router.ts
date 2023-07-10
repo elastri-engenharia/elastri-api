@@ -46,4 +46,37 @@ export default (router: Router) => {
       ? res.status(201).json({ subfield })
       : res.status(400).json({ message: "Unable to register subfield." })
   })
+
+  router.patch("/subfields/:id_subField/update", async (req, res) => {
+    const { id_subField } = req.params
+
+    const { name } = req.body
+
+    const subfieldIsInUseNot = await prisma.subField.findFirst({
+      where: {
+        NOT: {
+          id_subField,
+        },
+        AND: {
+          name,
+        },
+      },
+    })
+
+    if (subfieldIsInUseNot)
+      return res.status(400).json({ message: "Sorry name is in use." })
+
+    const subfield = await prisma.subField.update({
+      where: {
+        id_subField,
+      },
+      data: {
+        name,
+      },
+    })
+
+    return subfield
+      ? res.status(200).json({ subfield })
+      : res.status(400).json({ message: "Unable to update this subfield." })
+  })
 }
