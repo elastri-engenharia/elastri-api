@@ -49,4 +49,38 @@ export default (router: Router) => {
       ? res.status(201).json({ measurement })
       : res.status(400).json({ message: "Unable to register measurement." })
   })
+
+  router.patch("/measurements/:id_measurement/update", async (req, res) => {
+    const { id_measurement } = req.params
+
+    const { name_measurement, symbol } = req.body
+
+    const measurementIsInNotUse = await prisma.measurement.findFirst({
+      where: {
+        NOT: {
+          id_measurement,
+        },
+        AND: {
+          symbol,
+        },
+      },
+    })
+
+    if (measurementIsInNotUse)
+      return res.status(400).json({ message: "Sorry symbol is in use." })
+
+    const measurement = await prisma.measurement.update({
+      where: {
+        id_measurement,
+      },
+      data: {
+        name_measurement,
+        symbol,
+      },
+    })
+
+    return measurement
+      ? res.status(200).json({ measurement })
+      : res.status(400).json({ message: "Unable to update this measurement." })
+  })
 }
