@@ -25,4 +25,28 @@ export default (router: Router) => {
         })
       : res.status(400).json({ message: "Measured not found." })
   })
+
+  router.post("/measurements/create", async (req, res) => {
+    const { name_measurement, symbol } = req.body
+
+    const measurementOrNotFound = await prisma.measurement.findFirst({
+      where: {
+        symbol,
+      },
+    })
+
+    if (measurementOrNotFound)
+      return res.status(400).json({ message: "Sorry symbol is in use." })
+
+    const measurement = await prisma.measurement.create({
+      data: {
+        name_measurement,
+        symbol,
+      },
+    })
+
+    return measurement
+      ? res.status(201).json({ measurement })
+      : res.status(400).json({ message: "Unable to register measurement." })
+  })
 }
