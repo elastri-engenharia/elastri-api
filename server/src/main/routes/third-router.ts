@@ -23,4 +23,48 @@ export default (router: Router) => {
       ? res.status(200).json({ third })
       : res.status(400).json({ message: "Third nor found." })
   })
+
+  router.post("/thirds/create", async (req, res) => {
+    const {
+      code_third,
+      name_third,
+      disabled_third,
+      construction_idConstruction,
+    } = req.body
+
+    const thirdOrNotFound = await prisma.third.findFirst({
+      where: {
+        code_third,
+      },
+    })
+
+    const constructionOrNotFound = await prisma.construction.findFirst({
+      where: {
+        id_construction: construction_idConstruction,
+      },
+    })
+
+    if (thirdOrNotFound)
+      return res.status(400).json({ message: "Third already exists." })
+
+    if (!constructionOrNotFound)
+      return res.status(400).json({ message: "Construction not found." })
+
+    const construction = await prisma.third.create({
+      data: {
+        code_third,
+        name_third,
+        disabled_third,
+        construction_idConstruction: {
+          connect: {
+            id_construction: construction_idConstruction,
+          },
+        },
+      },
+    })
+
+    return construction
+      ? res.status(200).json({ construction })
+      : res.status(400).json({ message: "Unable to register third." })
+  })
 }
