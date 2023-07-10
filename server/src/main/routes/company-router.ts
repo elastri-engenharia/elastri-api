@@ -48,4 +48,37 @@ export default (router: Router) => {
       ? res.status(201).json({ company })
       : res.status(400).json({ message: "Unable to register company." })
   })
+
+  router.patch("/companys/:id_company/update", async (req, res) => {
+    const { id_company } = req.params
+
+    const { company_name } = req.body
+
+    const companyIsInNotUse = await prisma.company.findFirst({
+      where: {
+        NOT: {
+          id_company,
+        },
+        AND: {
+          company_name,
+        },
+      },
+    })
+
+    if (companyIsInNotUse)
+      return res.status(400).json({ message: "Sorry company name is in use." })
+
+    const company = await prisma.company.update({
+      where: {
+        id_company,
+      },
+      data: {
+        company_name,
+      },
+    })
+
+    return company
+      ? res.status(200).json({ company })
+      : res.status(400).json({ message: "Unable to update company." })
+  })
 }
