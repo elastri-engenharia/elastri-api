@@ -53,19 +53,22 @@ model Construction {
 }
 
 model Garden {
-  id_garden String @id @default(uuid())
+  id_garden String    @id @default(uuid())
   name      String
+  Service   Service[]
 }
 
 model SubField {
-  id_subField String @id @default(uuid())
+  id_subField String    @id @default(uuid())
   name        String
+  Service     Service[]
 }
 
 model Measurement {
-  id_measurement   String @id @default(uuid())
+  id_measurement   String    @id @default(uuid())
   name_measurement String
   symbol           String
+  Service          Service[]
 }
 
 model Service {
@@ -74,13 +77,16 @@ model Service {
   name_service                String
   code_totvs                  String
   activity                    String
-  garden                      String
-  subfield                    String
+  gardenId_garden             String
+  subFieldId_subField         String?
+  measurementId_measurement   String
   foreseen                    String
-  undMeasure                  String
   advance                     String
   constructionId_construction String
   collaboratorId_collaborator String
+  garden                      Garden       @relation(fields: [gardenId_garden], references: [id_garden])
+  subfield                    SubField?    @relation(fields: [subFieldId_subField], references: [id_subField])
+  undMeasure                  Measurement  @relation(fields: [measurementId_measurement], references: [id_measurement])
   construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
   collaborator_idCollaborator Collaborator @relation(fields: [collaboratorId_collaborator], references: [id_collaborator])
   disabled_service            Boolean      @default(false)
