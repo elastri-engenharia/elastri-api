@@ -73,4 +73,62 @@ export default (router: Router) => {
       ? res.status(201).json({ collaborator })
       : res.status(400).json({ message: "Unable to register collaborator." })
   })
+
+  router.put("/collaborators/:id_collaborator/update", async (req, res) => {
+    const { id_collaborator } = req.params
+
+    const {
+      matriculation,
+      name_collaborator,
+      office_collaborator,
+      disabled_collaborator,
+      responsible,
+      construction_idConstruction,
+    } = req.body
+
+    const collaboratorIsInNotUse = await prisma.collaborator.findFirst({
+      where: {
+        NOT: {
+          id_collaborator,
+        },
+        AND: {
+          matriculation,
+        },
+      },
+    })
+
+    const constructionOrNotFound = await prisma.construction.findFirst({
+      where: {
+        id_construction: construction_idConstruction,
+      },
+    })
+
+    if (collaboratorIsInNotUse)
+      return res.status(400).json({ message: "Sorry matriculation is in use." })
+
+    if (!constructionOrNotFound)
+      return res.status(400).json({ message: "Construction not found." })
+
+    const updatedCollaborator = await prisma.collaborator.update({
+      where: {
+        id_collaborator,
+      },
+      data: {
+        matriculation,
+        name_collaborator,
+        office_collaborator,
+        disabled_collaborator,
+        responsible,
+        construction_idConstruction: {
+          connect: {
+            id_construction: construction_idConstruction,
+          },
+        },
+      },
+    })
+
+    return updatedCollaborator
+      ? res.status(200).json({ updatedCollaborator })
+      : res.status(400).json({ message: "Unable to update this collaborator." })
+  })
 }
