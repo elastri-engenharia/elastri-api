@@ -131,10 +131,10 @@ model Collaborator {
   office_collaborator         String
   disabled_collaborator       Boolean      @default(false)
   responsible                 Boolean
-  userId_user                 String
+  userId_user                 String?
   constructionId_construction String
   snack                       Snack[]
-  user_idUser                 User         @relation(fields: [userId_user], references: [id_user])
+  user_idUser                 User?        @relation(fields: [userId_user], references: [id_user])
   construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
   service                     Service[]
 }
