@@ -25,4 +25,52 @@ export default (router: Router) => {
         : res.status(400).json({ message: "Collaborator not found." })
     },
   )
+
+  router.post("/collaborators/create", async (req, res) => {
+    const {
+      matriculation,
+      name_collaborator,
+      office_collaborator,
+      disabled_collaborator,
+      responsible,
+      construction_idConstruction,
+    } = req.body
+
+    const collaboratorOrNotFound = await prisma.collaborator.findFirst({
+      where: {
+        matriculation,
+      },
+    })
+
+    const constructionOrNotFound = await prisma.construction.findFirst({
+      where: {
+        id_construction: construction_idConstruction,
+      },
+    })
+
+    if (collaboratorOrNotFound)
+      return res.status(400).json({ message: "Collaborator already exists." })
+
+    if (!constructionOrNotFound)
+      return res.status(400).json({ message: "Construction not found." })
+
+    const collaborator = await prisma.collaborator.create({
+      data: {
+        matriculation,
+        name_collaborator,
+        office_collaborator,
+        disabled_collaborator,
+        responsible,
+        construction_idConstruction: {
+          connect: {
+            id_construction: construction_idConstruction,
+          },
+        },
+      },
+    })
+
+    return collaborator
+      ? res.status(201).json({ collaborator })
+      : res.status(400).json({ message: "Unable to register collaborator." })
+  })
 }

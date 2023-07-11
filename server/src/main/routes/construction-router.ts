@@ -46,7 +46,7 @@ export default (router: Router) => {
       return res.status(400).json({ message: "Construction already exists." })
 
     if (!companyOrNotFound)
-      return res.status(404).json({ message: "Company not found." })
+      return res.status(400).json({ message: "Company not found." })
 
     const construction = await prisma.construction.create({
       data: {
