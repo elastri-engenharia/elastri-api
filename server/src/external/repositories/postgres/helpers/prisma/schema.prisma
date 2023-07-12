@@ -72,8 +72,8 @@ model Measurement {
 }
 
 model Service {
-  id_service                  String       @id @default(uuid())
-  code_service                String       @unique
+  id_service                  String         @id @default(uuid())
+  code_service                String         @unique
   name_service                String
   code_totvs                  String
   activity                    String
@@ -83,13 +83,12 @@ model Service {
   foreseen                    String
   advance                     String
   constructionId_construction String
-  collaboratorId_collaborator String
-  garden                      Garden       @relation(fields: [gardenId_garden], references: [id_garden])
-  subfield                    SubField?    @relation(fields: [subFieldId_subField], references: [id_subField])
-  undMeasure                  Measurement  @relation(fields: [measurementId_measurement], references: [id_measurement])
-  construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
-  collaborator_idCollaborator Collaborator @relation(fields: [collaboratorId_collaborator], references: [id_collaborator])
-  disabled_service            Boolean      @default(false)
+  garden                      Garden         @relation(fields: [gardenId_garden], references: [id_garden])
+  subfield                    SubField?      @relation(fields: [subFieldId_subField], references: [id_subField])
+  undMeasure                  Measurement    @relation(fields: [measurementId_measurement], references: [id_measurement])
+  construction_idConstruction Construction   @relation(fields: [constructionId_construction], references: [id_construction])
+  collaborator_idCollaborator Collaborator[]
+  disabled_service            Boolean        @default(false)
   production                  Production[]
 }
 
@@ -140,9 +139,9 @@ model Collaborator {
   userId_user                 String?
   constructionId_construction String
   snack                       Snack[]
+  service                     Service[]
   user_idUser                 User?        @relation(fields: [userId_user], references: [id_user])
   construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
-  service                     Service[]
 }
 
 model Snack {
