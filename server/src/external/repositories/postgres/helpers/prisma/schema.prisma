@@ -79,10 +79,11 @@ model Service {
   activity                    String
   gardenId_garden             String
   measurementId_measurement   String
+  subFieldId_subField         String?
   foreseen                    String
   advance                     String
   constructionId_construction String
-  subfield                    SubField[]
+  subfield                    SubField?      @relation(fields: [subFieldId_subField], references: [id_subField])
   garden                      Garden         @relation(fields: [gardenId_garden], references: [id_garden])
   undMeasure                  Measurement    @relation(fields: [measurementId_measurement], references: [id_measurement])
   construction_idConstruction Construction   @relation(fields: [constructionId_construction], references: [id_construction])
