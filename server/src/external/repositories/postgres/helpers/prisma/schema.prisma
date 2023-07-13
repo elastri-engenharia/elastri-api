@@ -78,13 +78,12 @@ model Service {
   code_totvs                  String
   activity                    String
   gardenId_garden             String
-  subFieldId_subField         String?
   measurementId_measurement   String
   foreseen                    String
   advance                     String
   constructionId_construction String
+  subfield                    SubField[]
   garden                      Garden         @relation(fields: [gardenId_garden], references: [id_garden])
-  subfield                    SubField?      @relation(fields: [subFieldId_subField], references: [id_subField])
   undMeasure                  Measurement    @relation(fields: [measurementId_measurement], references: [id_measurement])
   construction_idConstruction Construction   @relation(fields: [constructionId_construction], references: [id_construction])
   collaborator_idCollaborator Collaborator[]
