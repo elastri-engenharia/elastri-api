@@ -1,9 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import { BrowserRouter as Router } from "react-router-dom";
+import App from "./App";
+import "./index.css";
+import "./general-sans.css";
+import "./satoshi.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <App />
+    </Router>
   </React.StrictMode>
 );
