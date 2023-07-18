@@ -15,16 +15,16 @@ import {
   HiMiniMagnifyingGlass,
 } from "react-icons/hi2";
 
-const CollabDashboard = () => {
+const CollabLists = () => {
   const [search, setSearch] = useState("");
 
-  const collaborator = useQuery(["hello"], () =>
+  const collaborator = useQuery(["AllCollaborators"], () =>
     api.get("collaborators").then((res) => res.data)
   );
 
   return (
     <>
-      <Breadcrumb pageName="Collaborator" />
+      <Breadcrumb pageName="Listagem & Registro de Colaboradores" />
 
       <div className="flex flex-col gap-10">
         <div className="flex justify-between">
@@ -46,28 +46,40 @@ const CollabDashboard = () => {
               />
             </div>
           </div>
-          <div className="">
-            <button
-              type=""
-              className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
-            >
-              <HiUserPlus className="h-7 w-7 pr-2 font-medium text-white" />
-              Novo Colaborador
-            </button>
-          </div>
-          <div className="">
-            <button
-              type="submit"
-              className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
-            >
-              <HiUserPlus className="h-7 w-7 pr-2 font-medium text-white" />
-              Novo Colaborador
-            </button>
+          <div className="flex justify-between">
+            <div className="">
+              <button
+                type="submit"
+                className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
+              >
+                <HiUserPlus className="h-7 w-7 pr-2 font-medium text-white" />
+                Novo Colaborador
+              </button>
+            </div>
+            <div className="">
+              <button
+                type="submit"
+                className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
+              >
+                <HiUserPlus className="h-7 w-7 pr-2 font-medium text-white" />
+                Novo Colaborador
+              </button>
+            </div>
           </div>
         </div>
 
         <Tables.Root>
-          <Tables.THead />
+          <Tables.THead>
+            <Tables.THContent
+              item="Mat."
+              className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11"
+            />
+            <Tables.THContent item="Nome" className="min-w-[250px]" />
+            <Tables.THContent item="Função" className="min-w-[120px]" />
+            <Tables.THContent item="Ativo" className="min-w-[80px]" />
+            <Tables.THContent item="Resp." className="min-w-[80px]" />
+            <Tables.THContent item="Ações" />
+          </Tables.THead>
           {collaborator.data?.collaborators
             .filter((item: Collaborator) => {
               return search.toLowerCase() === ""
@@ -101,4 +113,4 @@ const CollabDashboard = () => {
   );
 };
 
-export default CollabDashboard;
+export default CollabLists;

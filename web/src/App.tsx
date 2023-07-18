@@ -14,6 +14,7 @@ const Chart = lazy(() => import("./pages/Chart"));
 const CollabDashboard = lazy(
   () => import("./pages/Collaborator/CollabDashboard")
 );
+const CollabLists = lazy(() => import("./pages/Collaborator/CollabLists"));
 const FormElements = lazy(() => import("./pages/Form/FormElements"));
 const FormLayout = lazy(() => import("./pages/Form/FormLayout"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -49,6 +50,22 @@ function App() {
           <Route element={<DefaultLayout />}>
             <Route index element={<ECommerce />} />
             <Route
+              path="/collaborators/"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <CollabDashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/collaborators/lists"
+              element={
+                <Suspense fallback={<Loader />}>
+                  <CollabLists />
+                </Suspense>
+              }
+            />
+            <Route
               path="/calendar"
               element={
                 <Suspense fallback={<Loader />}>
@@ -77,14 +94,6 @@ function App() {
               element={
                 <Suspense fallback={<Loader />}>
                   <FormLayout />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/collaborators/collab-dashboard"
-              element={
-                <Suspense fallback={<Loader />}>
-                  <CollabDashboard />
                 </Suspense>
               }
             />
