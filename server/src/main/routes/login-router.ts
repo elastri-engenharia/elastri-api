@@ -25,7 +25,7 @@ export default (router: Router) => {
           .json({ message: "Username or password incorrect." })
 
       const token = sign(
-        { id_user: user.id_user, username: user.username, role: user.role },
+        { id_user: user.id_user },
         process.env.JWT_SECRET_KEY,
         {
           expiresIn: "1h",
@@ -33,9 +33,11 @@ export default (router: Router) => {
       )
 
       return res.status(200).json({
-        id_user: user.id_user,
-        username: user.username,
-        role: user.role,
+        user: {
+          id_user: user.id_user,
+          username: user.username,
+          role: user.role,
+        },
         token: token,
       })
     } catch (error) {

@@ -1,8 +1,25 @@
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
 import LogoDark from "../../images/logo/logoss.svg";
 import Logo from "../../images/logo/logoss.svg";
 
+import { useAuth } from "../../contexts/auth";
+
+type Inputs = {
+  username: string;
+  password: string;
+};
+
 const SignIn = () => {
+  const { Login, signed } = useAuth();
+
+  const { register, handleSubmit } = useForm<Inputs>();
+
+  const handleSign = async (value: Inputs) => {
+    await Login(value);
+  };
+
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -151,14 +168,15 @@ const SignIn = () => {
                 Sign In to TailAdmin
               </h2>
 
-              <form>
+              <form onSubmit={handleSubmit(handleSign)}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Email
+                    Username
                   </label>
                   <div className="relative">
                     <input
-                      type="email"
+                      {...register("username")}
+                      type="text"
                       placeholder="Enter your email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
@@ -189,6 +207,7 @@ const SignIn = () => {
                   </label>
                   <div className="relative">
                     <input
+                      {...register("password")}
                       type="password"
                       placeholder="6+ Characters, 1 Capital letter"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
