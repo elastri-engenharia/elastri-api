@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 interface TableBodyProps {
-  index: number;
+  index?: number;
   children: ReactNode;
 }
 
