@@ -1,18 +1,26 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 
-const SwitcherThree = () => {
+interface SwitcherThreeProps {
+  registers: any;
+  identify: string;
+}
+
+export default function SwitcherThree({ registers, identify }: SwitcherThreeProps) {
+  const { register } = useFormContext();
   const [enabled, setEnabled] = useState(false);
 
   return (
     <div>
       <label
-        htmlFor="toggle3"
+        htmlFor={identify}
         className="flex cursor-pointer select-none items-center"
       >
         <div className="relative">
           <input
+            {...register(registers)}
             type="checkbox"
-            id="toggle3"
+            id={identify}
             className="sr-only"
             onChange={() => {
               setEnabled(!enabled);
@@ -21,10 +29,10 @@ const SwitcherThree = () => {
           <div className="block h-8 w-14 rounded-full bg-meta-9 dark:bg-[#5A616B]"></div>
           <div
             className={`dot absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white transition ${
-              enabled && '!right-1 !translate-x-full !bg-primary dark:!bg-white'
+              enabled && "!right-1 !translate-x-full !bg-primary dark:!bg-white"
             }`}
           >
-            <span className={`hidden ${enabled && '!block'}`}>
+            <span className={`hidden ${enabled && "!block"}`}>
               <svg
                 className="fill-white dark:fill-black"
                 width="11"
@@ -41,7 +49,7 @@ const SwitcherThree = () => {
                 ></path>
               </svg>
             </span>
-            <span className={`${enabled && 'hidden'}`}>
+            <span className={`${enabled && "hidden"}`}>
               <svg
                 className="h-4 w-4 stroke-current"
                 fill="none"
@@ -61,6 +69,4 @@ const SwitcherThree = () => {
       </label>
     </div>
   );
-};
-
-export default SwitcherThree;
+}
