@@ -2,12 +2,13 @@ import { Route, Routes } from "react-router-dom";
 import {} from "react-router";
 
 import { Suspense, lazy, useEffect, useState } from "react";
+import { useAuth } from "./contexts/auth";
 
 import ECommerce from "./pages/Dashboard/ECommerce";
 import SignIn from "./pages/Authentication/SignIn";
 import SignUp from "./pages/Authentication/SignUp";
 import Loader from "./common/Loader";
-import { useAuth } from "./contexts/auth";
+import { ModalForms } from "./components/ModalForms/ModalFormsRoot";
 
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Chart = lazy(() => import("./pages/Chart"));
