@@ -1,9 +1,9 @@
-import { FormElementsAction } from "./FormElementsAction";
-import { FormElementsBody } from "./FormElementsBody";
-import { FormElementsContainer } from "./FormElementsContainer";
-import { FormElementsContainerDivider } from "./FormElementsContainerDivider";
-import { FormElementsHeader } from "./FormElementsHeader";
-import { FormElementsInputsActive } from "./FormElementsInputActive";
+import FormElementsAction from "./FormElementsAction";
+import FormElementsBody from "./FormElementsBody";
+import FormElementsContainer from "./FormElementsContainer";
+import FormElementsContainerDivider from "./FormElementsContainerDivider";
+import FormElementsHeader from "./FormElementsHeader";
+import FormElementsInputsActive from "./FormElementsInputActive";
 import FormElementsInputsDisabled from "./FormElementsInputDisabled";
 import FormElementsInputs from "./FormElementsInputs";
 import FormElementsLabel from "./FormElementsLabel";

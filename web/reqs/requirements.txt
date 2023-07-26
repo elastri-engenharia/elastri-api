@@ -1,0 +1,4 @@
+QueryKeys utilities
+
+allUsers            =>          /users
+allColaborators     =>          /collaborators

@@ -8,10 +8,10 @@ import ECommerce from "./pages/Dashboard/ECommerce";
 import SignIn from "./pages/Authentication/SignIn";
 import SignUp from "./pages/Authentication/SignUp";
 import Loader from "./common/Loader";
-import { ModalForms } from "./components/ModalForms/ModalFormsRoot";
 
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Chart = lazy(() => import("./pages/Chart"));
+const UserLists = lazy(() => import("./pages/User/UserLists"));
 const CollabDashboard = lazy(
   () => import("./pages/Collaborator/CollabDashboard")
 );
@@ -43,6 +43,14 @@ export function Routing() {
       <Routes>
         <Route element={<DefaultLayout />}>
           <Route index element={<ECommerce />} />
+          <Route
+            path="/users"
+            element={
+              <Suspense fallback={<Loader />}>
+                <UserLists />
+              </Suspense>
+            }
+          />
           <Route
             path="/collaborators/"
             element={

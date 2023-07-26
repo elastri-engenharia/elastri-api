@@ -7,6 +7,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import Logo from "../images/logo/logoss.svg";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 
+import { HiOutlineUser } from "react-icons/hi2";
+
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
@@ -203,6 +205,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 }}
               </SidebarLinkGroup>
               {/* <!-- Menu Item Dashboard --> */}
+
+              {/* <!-- Menu Item Users --> */}
+              <li>
+                <NavLink
+                  to="/users"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes("users") && "bg-graydark dark:bg-meta-4"
+                  }`}
+                >
+                  <HiOutlineUser className="h-5 w-5" />
+                  Users
+                </NavLink>
+              </li>
+              {/* <!-- Menu Item Users --> */}
 
               {/* <!-- Menu Item Collaborator --> */}
               <SidebarLinkGroup
