@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import {} from "react-router";
 
 import { Suspense, lazy, useEffect, useState } from "react";
 import { useAuth } from "./contexts/auth";
@@ -12,6 +11,7 @@ import Loader from "./common/Loader";
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Chart = lazy(() => import("./pages/Chart"));
 const UserLists = lazy(() => import("./pages/User/UserLists"));
+const CompanyList = lazy(() => import("./pages/Company/CompanyList"));
 const CollabDashboard = lazy(
   () => import("./pages/Collaborator/CollabDashboard")
 );
@@ -48,6 +48,14 @@ export function Routing() {
             element={
               <Suspense fallback={<Loader />}>
                 <UserLists />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/companys"
+            element={
+              <Suspense fallback={<Loader />}>
+                <CompanyList />
               </Suspense>
             }
           />

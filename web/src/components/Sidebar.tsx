@@ -220,6 +220,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li>
               {/* <!-- Menu Item Users --> */}
 
+              {/* <!-- Menu Item Company --> */}
+              <li>
+                <NavLink
+                  to="/companys"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes("companys") &&
+                    "bg-graydark dark:bg-meta-4"
+                  }`}
+                >
+                  <HiOutlineUser className="h-5 w-5" />
+                  Companys
+                </NavLink>
+              </li>
+              {/* <!-- Menu Item Company --> */}
+
               {/* <!-- Menu Item Collaborator --> */}
               <SidebarLinkGroup
                 activeCondition={
@@ -250,7 +265,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           viewBox="0 0 24 24"
                           stroke-width="1.5"
                           stroke="currentColor"
-                          className="h-6 w-6"
+                          className="h-5 w-5"
                         >
                           <path
                             stroke-linecap="round"
