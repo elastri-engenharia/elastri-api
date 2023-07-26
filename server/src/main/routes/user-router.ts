@@ -11,7 +11,7 @@ export default (router: Router) => {
   router.get("/users/roles", auth, can(["ADMIN"]), async (req, res) => {
     const roles = Role
 
-    return res.status(200).json(roles)
+    return res.status(200).json({ roles })
   })
 
   router.get(
@@ -21,7 +21,7 @@ export default (router: Router) => {
     async (req, res) => {
       const users = await prisma.user.findMany()
 
-      return res.status(200).json(users)
+      return res.status(200).json({ users })
     },
   )
 
