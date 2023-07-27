@@ -9,7 +9,12 @@ export default (router: Router) => {
     auth,
     can(["ADMIN", "ACCESS_ADMIN"]),
     async (req, res) => {
-      const companys = await prisma.company.findMany()
+      const companys = await prisma.company.findMany({
+        include: {
+          jobs: true,
+          users: true,
+        },
+      })
 
       return companys
         ? res.status(200).json({ companys })
@@ -29,6 +34,10 @@ export default (router: Router) => {
       const company = await prisma.company.findFirst({
         where: {
           id_company,
+        },
+        include: {
+          jobs: true,
+          users: true,
         },
       })
 
@@ -73,7 +82,7 @@ export default (router: Router) => {
     async (req, res) => {
       const { id_company } = req.params
 
-      const { company_name } = req.body
+      const { company_name, users } = req.body
 
       const companyIsInNotUse = await prisma.company.findFirst({
         where: {
@@ -97,6 +106,12 @@ export default (router: Router) => {
         },
         data: {
           company_name,
+          users: {
+            set: users,
+          },
+        },
+        include: {
+          users: true,
         },
       })
 
