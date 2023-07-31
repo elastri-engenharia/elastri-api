@@ -11,6 +11,9 @@ import Loader from "./common/Loader";
 const Calendar = lazy(() => import("./pages/Calendar"));
 const Chart = lazy(() => import("./pages/Chart"));
 const UserLists = lazy(() => import("./pages/User/UserLists"));
+const ConstructionLists = lazy(
+  () => import("./pages/Construction/ConstructionLists")
+);
 const CompanyList = lazy(() => import("./pages/Company/CompanyList"));
 const CollabDashboard = lazy(
   () => import("./pages/Collaborator/CollabDashboard")
@@ -48,6 +51,14 @@ export function Routing() {
             element={
               <Suspense fallback={<Loader />}>
                 <UserLists />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/constructions"
+            element={
+              <Suspense fallback={<Loader />}>
+                <ConstructionLists />
               </Suspense>
             }
           />

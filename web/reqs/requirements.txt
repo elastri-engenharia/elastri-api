@@ -3,3 +3,4 @@ QueryKeys utilities
 allUsers            =>          /users
 allColaborators     =>          /collaborators
 allCompany          =>          /companys
+allContructions     =>          /contructions
