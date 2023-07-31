@@ -8,8 +8,7 @@ import FormElementsInputsDisabled from "./FormElementsInputDisabled";
 import FormElementsInputs from "./FormElementsInputs";
 import FormElementsLabel from "./FormElementsLabel";
 import FormElementsRoot from "./FormElementsRoot";
-import FormElementsSelectMultContainer from "./FormElementsSelectMultContainer";
-import FormElementsSelectMultOption from "./FormElementsSelectMultOption";
+import FormElementsSelectMult from "./FormElementsSelectMult";
 import FormElementsSelectSimpleContainer from "./FormElementsSelectSimpleContainer";
 import FormElementsSelectSimpleOption from "./FormElementsSelectSimpleOption";
 import FormElementsTextArea from "./FormElementsTextArea";
@@ -29,8 +28,7 @@ export const FormElements = {
   FAction: FormElementsAction,
   FSelectSimpleContainer: FormElementsSelectSimpleContainer,
   FSelectSimpleOption: FormElementsSelectSimpleOption,
-  FSelectMultContainer: FormElementsSelectMultContainer,
-  FSelectMultOption: FormElementsSelectMultOption,
+  FSelectMult: FormElementsSelectMult,
   FTextArea: FormElementsTextArea,
   FTextAreaActive: FormElementsTextAreaActive,
   FTextAreaDisabled: FormElementsTextAreaDisabled,
