@@ -7,7 +7,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import Logo from "../images/logo/logoss.svg";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 
-import { HiOutlineUser } from "react-icons/hi2";
+import { HiOutlineUser, HiOutlineBuildingOffice2 } from "react-icons/hi2";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -229,7 +229,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
-                  <HiOutlineUser className="h-5 w-5" />
+                  <HiOutlineBuildingOffice2 className="h-5 w-5" />
                   Companys
                 </NavLink>
               </li>
