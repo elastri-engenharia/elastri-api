@@ -10,7 +10,11 @@ export default (router: Router) => {
     auth,
     can(["ADMIN", "ACCESS_ADMIN"]),
     async (req, res) => {
-      const constructions = await prisma.construction.findMany()
+      const constructions = await prisma.construction.findMany({
+        include: {
+          company_idCompany: true,
+        },
+      })
 
       return constructions
         ? res.status(200).json({ constructions })
