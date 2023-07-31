@@ -28,6 +28,7 @@ import {
 } from "../../entity/Company";
 
 import Loader from "../../common/Loader";
+import { User } from "../../entity/User";
 
 export default function UserLists() {
   const methods = useForm<companyFormData>({
@@ -37,6 +38,7 @@ export default function UserLists() {
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState<string>("");
+  const [idCompany, setIdCompany] = useState<string>("");
   const [openMConfirmTrash, setOpenMConfirmTrash] = useState<boolean>(false);
   const [openMFormsCreated, setOpenMFormsCreated] = useState<boolean>(false);
   const [openMFormsUpdated, setOpenMFormsUpdated] = useState<boolean>(false);
@@ -45,17 +47,58 @@ export default function UserLists() {
     api.get("companys").then((res) => res.data)
   );
 
-  const handleSubmitCreated = async (value: any) => {
+  const user = useQuery(["allUsers"], () =>
+    api.get("users").then((res) => res.data)
+  );
+
+  const createdCompany = useMutation(
+    (data) => api.post("companys/create", data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("allCompany");
+      },
+    }
+  );
+
+  const updatedCompany = useMutation(
+    (data) => api.patch(`companys/${idCompany}/update`, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("allCompany");
+      },
+    }
+  );
+
+  const selectedUser = company.data?.companys.find(
+    (item: Company) => item.id_company === idCompany
+  );
+
+  const selected = selectedUser?.users.map((user: User) => user.username);
+
+  const option = user.data?.users.map((item: User) => item.username);
+
+  const handleSubmitCreated = async (value: Company) => {
+    await createdCompany.mutateAsync(value);
     methods.reset();
   };
 
-  const handleSubmitUpdated = async (value: any) => {
+  const handleSubmitUpdated = async (value: Company) => {
+    const users = value.users?.map((item, index) => ({
+      username: item,
+    }));
+
+    const company = {
+      company_name: value.company_name,
+      users,
+    };
+
+    await updatedCompany.mutateAsync(company);
     methods.reset();
   };
 
-  //   if (updateUser.isLoading || createUser.isLoading) {
-  //     return <Loader />;
-  //   }
+  if (updatedCompany.isLoading || createdCompany.isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -121,8 +164,8 @@ export default function UserLists() {
                     icon={HiOutlinePencilSquare}
                     onClick={() => {
                       setOpenMFormsUpdated(true);
-                      //   methods.setValue("company_name", item.company_name);
-                      //   setIdUser(item.id_company);
+                      methods.setValue("company_name", item.company_name);
+                      setIdCompany(item.id_company);
                     }}
                   />
                   <Tables.TAction
@@ -166,10 +209,10 @@ export default function UserLists() {
                   <FormElements.FLabels title="Nome da Empresa" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    isResponseError={company.isError}
-                    responseError={company.error}
+                    isResponseError={createdCompany.isError}
+                    responseError={createdCompany.error}
                     registers="company_name"
-                    placeholder="Insira seu Nome da Empresa"
+                    placeholder="Insira Nome da Empresa"
                   />
                 </FormElements.FContainer>
 
@@ -203,10 +246,20 @@ export default function UserLists() {
                   <FormElements.FLabels title="Nome da Empresa" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    isResponseError={company.isError}
-                    responseError={company.error}
+                    isResponseError={updatedCompany.isError}
+                    responseError={updatedCompany.error}
                     registers="company_name"
-                    placeholder="Insira seu Nome da Empresa"
+                    placeholder="Insira Nome da Empresa"
+                  />
+                </FormElements.FContainer>
+
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Usuários" symbol="*" />
+                  <FormElements.FSelectMult
+                    optionTitle="Selecione um ou mais usuários..."
+                    selected={selected}
+                    option={option}
+                    registers={"users"}
                   />
                 </FormElements.FContainer>
 
