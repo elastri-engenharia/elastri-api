@@ -11,6 +11,7 @@ import {
   HiArrowDownTray,
   HiOutlinePencilSquare,
   HiMiniMagnifyingGlass,
+  HiOutlineWrenchScrewdriver,
   HiTrash,
 } from "react-icons/hi2";
 
@@ -28,33 +29,61 @@ import {
   constructionFormData,
   constructionFormSchema,
 } from "../../entity/Construction";
+import { Company } from "../../entity/Company";
 
 export default function ConstructionLists() {
-  const methods = useForm<constructionFormData>({
-    resolver: zodResolver(constructionFormSchema),
-  });
-
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState<string>("");
+  const [idConstruction, setIdConstruction] = useState<string>("");
 
   const [openMConfirmTrash, setOpenMConfirmTrash] = useState<boolean>(false);
   const [openMFormsCreated, setOpenMFormsCreated] = useState<boolean>(false);
   const [openMFormsUpdated, setOpenMFormsUpdated] = useState<boolean>(false);
 
+  const methods = useForm<constructionFormData>({
+    resolver: zodResolver(constructionFormSchema),
+  });
+
   const construction = useQuery(["allConstructions"], () =>
     api.get("constructions").then((res) => res.data)
   );
 
-  const handleSubmitCreated = async (value: any) => {
-    console.log(value);
+  const company = useQuery(["allCompany"], () =>
+    api.get("companys").then((res) => res.data)
+  );
+
+  const createdConstruction = useMutation(
+    (data) => api.post("constructions/create", data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["allConstructions"]);
+      },
+    }
+  );
+
+  const updatedConstruction = useMutation(
+    (data) => api.patch(`constructions/${idConstruction}/update`, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["allConstructions"]);
+      },
+    }
+  );
+
+  const handleSubmitCreated = async (value: Construction) => {
+    await createdConstruction.mutateAsync(value);
     methods.reset();
   };
 
-  const handleSubmitUpdated = async (value: any) => {
-    console.log(value);
+  const handleSubmitUpdated = async (value: Construction) => {
+    await updatedConstruction.mutateAsync(value);
     methods.reset();
   };
+
+  if (updatedConstruction.isLoading || createdConstruction.isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -102,7 +131,7 @@ export default function ConstructionLists() {
               className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11"
             />
             <Tables.THContent item="Nome da Obra" className="min-w-[120px]" />
-            <Tables.THContent item="Cód. Empresa" className="min-w-[120px]" />
+            <Tables.THContent item="Nome Empresa" className="min-w-[120px]" />
             <Tables.THContent item="Ações" />
           </Tables.THead>
           {construction.data?.constructions
@@ -119,14 +148,25 @@ export default function ConstructionLists() {
                   className="pl-9 xl:pl-11"
                 />
                 <Tables.TBContent item={item.name_construction} />
-                <Tables.TBContent item={item.company_idCompany} />
+                <Tables.TBContent item={item.company_idCompany.company_name} />
                 <Tables.TActions>
                   <Tables.TAction
                     icon={HiOutlinePencilSquare}
                     onClick={() => {
                       setOpenMFormsUpdated(true);
-                      //   methods.setValue("company_name", item.company_name);
-                      //   setIdCompany(item.id_company);
+                      methods.setValue(
+                        "code_construction",
+                        item.code_construction
+                      );
+                      methods.setValue(
+                        "name_construction",
+                        item.name_construction
+                      );
+                      methods.setValue(
+                        "company_idCompany",
+                        item.company_idCompany.id_company
+                      );
+                      setIdConstruction(item.id_construction);
                     }}
                   />
                   <Tables.TAction
@@ -161,7 +201,7 @@ export default function ConstructionLists() {
         {/* Form for created */}
         <ModalsForm.Root isOpen={openMFormsCreated}>
           <FormElements.Root>
-            <FormElements.FHeader title="Create Company" />
+            <FormElements.FHeader title="Create Construction" />
             <FormProvider {...methods}>
               <FormElements.FBody
                 onSubmit={methods.handleSubmit(handleSubmitCreated)}
@@ -188,6 +228,24 @@ export default function ConstructionLists() {
                   />
                 </FormElements.FContainer>
 
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Nome da Empresa" symbol="*" />
+                  <FormElements.FSelectSimpleContainer
+                    icon={HiOutlineWrenchScrewdriver}
+                    registers="company_idCompany"
+                  >
+                    {company.data?.companys.map(
+                      (company: Company, index: number) => (
+                        <FormElements.FSelectSimpleOption
+                          key={index}
+                          option={company.company_name}
+                          value={company.id_company}
+                        />
+                      )
+                    )}
+                  </FormElements.FSelectSimpleContainer>
+                </FormElements.FContainer>
+
                 {/* Start Actions */}
                 <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
                   <FormElements.FAction
@@ -209,20 +267,49 @@ export default function ConstructionLists() {
         {/* Form for updated */}
         <ModalsForm.Root isOpen={openMFormsUpdated}>
           <FormElements.Root>
-            <FormElements.FHeader title="Update Company" />
+            <FormElements.FHeader title="Update Construction" />
             <FormProvider {...methods}>
               <FormElements.FBody
                 onSubmit={methods.handleSubmit(handleSubmitUpdated)}
               >
                 <FormElements.FContainer>
-                  <FormElements.FLabels title="Nome da Empresa" symbol="*" />
+                  <FormElements.FLabels title="Código da Obra" symbol="*" />
                   <FormElements.FInputs
                     type="text"
                     isResponseError={construction.isError}
                     responseError={construction.error}
-                    registers="company_name"
-                    placeholder="Insira Nome da Empresa"
+                    registers="code_construction"
+                    placeholder="Insira Código da Obra"
                   />
+                </FormElements.FContainer>
+
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Nome da Obra" symbol="*" />
+                  <FormElements.FInputs
+                    type="text"
+                    isResponseError={construction.isError}
+                    responseError={construction.error}
+                    registers="name_construction"
+                    placeholder="Insira o Nome da Obra"
+                  />
+                </FormElements.FContainer>
+
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Nome da Empresa" symbol="*" />
+                  <FormElements.FSelectSimpleContainer
+                    icon={HiOutlineWrenchScrewdriver}
+                    registers="company_idCompany"
+                  >
+                    {company.data?.companys.map(
+                      (company: Company, index: number) => (
+                        <FormElements.FSelectSimpleOption
+                          key={index}
+                          option={company.company_name}
+                          value={company.id_company}
+                        />
+                      )
+                    )}
+                  </FormElements.FSelectSimpleContainer>
                 </FormElements.FContainer>
 
                 {/* Start Actions */}
