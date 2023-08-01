@@ -1,8 +1,9 @@
-import { ElementType, ReactNode } from "react";
+import { ElementType, ReactNode, SelectHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
 import { HiChevronDown } from "react-icons/hi2";
 
-interface FormElementsSelectSimpleContainer {
+interface FormElementsSelectSimpleContainer
+  extends SelectHTMLAttributes<HTMLSelectElement> {
   icon: ElementType;
   registers: string;
   children: ReactNode;
@@ -12,6 +13,7 @@ export default function FormElementsSelectSimpleContainer({
   icon: Icon,
   registers,
   children,
+  ...rest
 }: FormElementsSelectSimpleContainer) {
   const { register } = useFormContext();
   return (
@@ -20,6 +22,7 @@ export default function FormElementsSelectSimpleContainer({
         <Icon className="h-5 w-5" />
       </span>
       <select
+        {...rest}
         {...register(registers)}
         className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent px-12 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input"
       >

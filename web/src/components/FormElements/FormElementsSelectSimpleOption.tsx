@@ -1,13 +1,17 @@
 import { OptionHTMLAttributes } from "react";
 
-interface FormElementsSelectSimpleOption
+interface FormElementsSelectSimpleOptionProps
   extends OptionHTMLAttributes<HTMLOptionElement> {
-  text: string;
+  option: string
 }
 
 export default function FormElementsSelectSimpleOption({
-  text,
+  option,
   ...rest
-}: FormElementsSelectSimpleOption) {
-  return <option {...rest}>{text}</option>;
+}: FormElementsSelectSimpleOptionProps) {
+  return (
+    <option {...rest}>
+      {option}
+    </option>
+  );
 }
