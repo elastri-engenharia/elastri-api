@@ -136,6 +136,8 @@ model Collaborator {
   office_collaborator         String
   disabled_collaborator       Boolean      @default(false)
   responsible                 Boolean
+  admission_date              String       @default("00/00/0000")
+  resignation_date            String?
   userId_user                 String?
   constructionId_construction String
   snack                       Snack[]
