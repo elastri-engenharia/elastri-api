@@ -9,7 +9,12 @@ export default (router: Router) => {
     auth,
     can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_ADMIN_SNACK"]),
     async (req, res) => {
-      const collaborators = await prisma.collaborator.findMany()
+      const collaborators = await prisma.collaborator.findMany({
+        include: {
+          construction_idConstruction: true,
+          user_idUser: true,
+        },
+      })
       return collaborators
         ? res.status(200).json({ collaborators })
         : res.status(400).json({ message: "No record found for collaborator." })
@@ -46,7 +51,10 @@ export default (router: Router) => {
         office_collaborator,
         disabled_collaborator,
         responsible,
+        admission_date,
+        resignation_date,
         construction_idConstruction,
+        user_idUser,
       } = req.body
 
       const collaboratorOrNotFound = await prisma.collaborator.findFirst({
@@ -67,6 +75,36 @@ export default (router: Router) => {
       if (!constructionOrNotFound)
         return res.status(400).json({ message: "Construction not found." })
 
+      if (user_idUser?.length) {
+        const collaborator = await prisma.collaborator.create({
+          data: {
+            matriculation,
+            name_collaborator,
+            office_collaborator,
+            disabled_collaborator,
+            responsible,
+            admission_date,
+            resignation_date,
+            construction_idConstruction: {
+              connect: {
+                id_construction: construction_idConstruction,
+              },
+            },
+            user_idUser: {
+              connect: {
+                id_user: user_idUser,
+              },
+            },
+          },
+        })
+
+        return collaborator
+          ? res.status(201).json({ collaborator })
+          : res
+              .status(400)
+              .json({ message: "Unable to register collaborator." })
+      }
+
       const collaborator = await prisma.collaborator.create({
         data: {
           matriculation,
@@ -74,6 +112,8 @@ export default (router: Router) => {
           office_collaborator,
           disabled_collaborator,
           responsible,
+          admission_date,
+          resignation_date,
           construction_idConstruction: {
             connect: {
               id_construction: construction_idConstruction,
@@ -101,7 +141,10 @@ export default (router: Router) => {
         office_collaborator,
         disabled_collaborator,
         responsible,
+        admission_date,
+        resignation_date,
         construction_idConstruction,
+        user_idUser,
       } = req.body
 
       const collaboratorIsInNotUse = await prisma.collaborator.findFirst({
@@ -129,6 +172,39 @@ export default (router: Router) => {
       if (!constructionOrNotFound)
         return res.status(400).json({ message: "Construction not found." })
 
+      if (user_idUser?.length) {
+        const updatedCollaborator = await prisma.collaborator.update({
+          where: {
+            id_collaborator,
+          },
+          data: {
+            matriculation,
+            name_collaborator,
+            office_collaborator,
+            disabled_collaborator,
+            responsible,
+            admission_date,
+            resignation_date,
+            construction_idConstruction: {
+              connect: {
+                id_construction: construction_idConstruction,
+              },
+            },
+            user_idUser: {
+              connect: {
+                id_user: user_idUser,
+              },
+            },
+          },
+        })
+
+        return updatedCollaborator
+          ? res.status(200).json({ updatedCollaborator })
+          : res
+              .status(400)
+              .json({ message: "Unable to update this collaborator." })
+      }
+
       const updatedCollaborator = await prisma.collaborator.update({
         where: {
           id_collaborator,
@@ -139,6 +215,8 @@ export default (router: Router) => {
           office_collaborator,
           disabled_collaborator,
           responsible,
+          admission_date,
+          resignation_date,
           construction_idConstruction: {
             connect: {
               id_construction: construction_idConstruction,
