@@ -16,10 +16,7 @@ export const roles = [
   { value: "ADMIN" },
   { value: "ACCESS_ADMIN" },
   { value: "ACCESS_ADMIN_RDC" },
-  { value: "ACCESS_ADMIN_SNACK" },
   { value: "ACCESS_FUNC_RDC" },
-  { value: "ACCESS_FUNC_SNACK" },
-  { value: "ACCESS_VISITOR_SNACK" },
 ];
 
 export const userFormSchema = z.object({
