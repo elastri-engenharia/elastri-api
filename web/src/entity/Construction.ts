@@ -4,11 +4,7 @@ export interface Construction {
   id_construction: string;
   code_construction: string;
   name_construction: string;
-  company_idCompany: {
-    id_company: string;
-    company_name: string;
-  };
-  user_idUser?: string;
+  users?: [{ id_user: string; username: string }];
 }
 
 export const constructionFormSchema = z.object({
@@ -22,7 +18,7 @@ export const constructionFormSchema = z.object({
     .toUpperCase()
     .nonempty("Este campo é obrigatório.")
     .max(100, "Este campo deve ter no máximo 100 caracteres."),
-  company_idCompany: z.string().nonempty("Este campo é obrigatório."),
+  users: z.array(z.string()).optional(),
 });
 
 export type constructionFormData = z.infer<typeof constructionFormSchema>;

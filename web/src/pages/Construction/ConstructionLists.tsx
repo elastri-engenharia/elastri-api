@@ -11,7 +11,6 @@ import {
   HiArrowDownTray,
   HiOutlinePencilSquare,
   HiMiniMagnifyingGlass,
-  HiOutlineWrenchScrewdriver,
   HiTrash,
 } from "react-icons/hi2";
 
@@ -29,7 +28,7 @@ import {
   constructionFormData,
   constructionFormSchema,
 } from "../../entity/Construction";
-import { Company } from "../../entity/Company";
+import { User } from "../../entity/User";
 
 export default function ConstructionLists() {
   const queryClient = useQueryClient();
@@ -49,9 +48,17 @@ export default function ConstructionLists() {
     api.get("constructions").then((res) => res.data)
   );
 
-  const company = useQuery(["allCompany"], () =>
-    api.get("companys").then((res) => res.data)
+  const users = useQuery(["allUsers"], () =>
+    api.get("users").then((res) => res.data)
   );
+
+  const selectedUser = construction.data?.constructions.find(
+    (item: Construction) => item.id_construction === idConstruction
+  );
+
+  const selected = selectedUser?.users.map((user: User) => user.username);
+
+  const option = users.data?.users.map((item: User) => item.username);
 
   const createdConstruction = useMutation(
     (data) => api.post("constructions/create", data),
@@ -77,7 +84,17 @@ export default function ConstructionLists() {
   };
 
   const handleSubmitUpdated = async (value: Construction) => {
-    await updatedConstruction.mutateAsync(value);
+    const users = value.users?.map((item, index) => ({
+      username: item,
+    }));
+
+    const construction = {
+      code_construction: value.code_construction,
+      name_construction: value.name_construction,
+      users,
+    };
+
+    await updatedConstruction.mutateAsync(construction);
     methods.reset();
   };
 
@@ -131,7 +148,6 @@ export default function ConstructionLists() {
               className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11"
             />
             <Tables.THContent item="Nome da Obra" className="min-w-[120px]" />
-            <Tables.THContent item="Nome Empresa" className="min-w-[120px]" />
             <Tables.THContent item="Ações" />
           </Tables.THead>
           {construction.data?.constructions
@@ -148,7 +164,6 @@ export default function ConstructionLists() {
                   className="pl-9 xl:pl-11"
                 />
                 <Tables.TBContent item={item.name_construction} />
-                <Tables.TBContent item={item.company_idCompany.company_name} />
                 <Tables.TActions>
                   <Tables.TAction
                     icon={HiOutlinePencilSquare}
@@ -161,10 +176,6 @@ export default function ConstructionLists() {
                       methods.setValue(
                         "name_construction",
                         item.name_construction
-                      );
-                      methods.setValue(
-                        "company_idCompany",
-                        item.company_idCompany.id_company
                       );
                       setIdConstruction(item.id_construction);
                     }}
@@ -228,24 +239,6 @@ export default function ConstructionLists() {
                   />
                 </FormElements.FContainer>
 
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Nome da Empresa" symbol="*" />
-                  <FormElements.FSelectSimpleContainer
-                    icon={HiOutlineWrenchScrewdriver}
-                    registers="company_idCompany"
-                  >
-                    {company.data?.companys.map(
-                      (company: Company, index: number) => (
-                        <FormElements.FSelectSimpleOption
-                          key={index}
-                          option={company.company_name}
-                          value={company.id_company}
-                        />
-                      )
-                    )}
-                  </FormElements.FSelectSimpleContainer>
-                </FormElements.FContainer>
-
                 {/* Start Actions */}
                 <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
                   <FormElements.FAction
@@ -295,21 +288,13 @@ export default function ConstructionLists() {
                 </FormElements.FContainer>
 
                 <FormElements.FContainer>
-                  <FormElements.FLabels title="Nome da Empresa" symbol="*" />
-                  <FormElements.FSelectSimpleContainer
-                    icon={HiOutlineWrenchScrewdriver}
-                    registers="company_idCompany"
-                  >
-                    {company.data?.companys.map(
-                      (company: Company, index: number) => (
-                        <FormElements.FSelectSimpleOption
-                          key={index}
-                          option={company.company_name}
-                          value={company.id_company}
-                        />
-                      )
-                    )}
-                  </FormElements.FSelectSimpleContainer>
+                  <FormElements.FLabels title="Usuários" symbol="*" />
+                  <FormElements.FSelectMult
+                    optionTitle="Selecions um ou mais usuários"
+                    selected={selected}
+                    option={option}
+                    registers="users"
+                  />
                 </FormElements.FContainer>
 
                 {/* Start Actions */}
