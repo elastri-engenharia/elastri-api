@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('ADMIN', 'ACCESS_ADMIN', 'ACCESS_ADMIN_RDC', 'ACCESS_ADMIN_SNACK', 'ACCESS_FUNC_RDC', 'ACCESS_FUNC_SNACK');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'ACCESS_ADMIN', 'ACCESS_ADMIN_RDC', 'ACCESS_FUNC_RDC');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -8,17 +8,9 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "Role" NOT NULL,
+    "constructionId_construction" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id_user")
-);
-
--- CreateTable
-CREATE TABLE "Company" (
-    "id_company" TEXT NOT NULL,
-    "userId_user" TEXT NOT NULL,
-    "company_name" TEXT NOT NULL,
-
-    CONSTRAINT "Company_pkey" PRIMARY KEY ("id_company")
 );
 
 -- CreateTable
@@ -26,7 +18,6 @@ CREATE TABLE "Construction" (
     "id_construction" TEXT NOT NULL,
     "code_construction" TEXT NOT NULL,
     "name_construction" TEXT NOT NULL,
-    "userId_user" TEXT NOT NULL,
     "companyId_company" TEXT NOT NULL,
 
     CONSTRAINT "Construction_pkey" PRIMARY KEY ("id_construction")
@@ -64,13 +55,12 @@ CREATE TABLE "Service" (
     "name_service" TEXT NOT NULL,
     "code_totvs" TEXT NOT NULL,
     "activity" TEXT NOT NULL,
-    "garden" TEXT NOT NULL,
-    "subfield" TEXT NOT NULL,
+    "gardenId_garden" TEXT NOT NULL,
+    "measurementId_measurement" TEXT NOT NULL,
+    "subFieldId_subField" TEXT,
     "foreseen" TEXT NOT NULL,
-    "undMeasure" TEXT NOT NULL,
     "advance" TEXT NOT NULL,
     "constructionId_construction" TEXT NOT NULL,
-    "collaboratorId_collaborator" TEXT NOT NULL,
     "disabled_service" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Service_pkey" PRIMARY KEY ("id_service")
@@ -91,16 +81,6 @@ CREATE TABLE "Production" (
 );
 
 -- CreateTable
-CREATE TABLE "MealTime" (
-    "id_mealTime" TEXT NOT NULL,
-    "start_time" TEXT NOT NULL,
-    "end_time" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-
-    CONSTRAINT "MealTime_pkey" PRIMARY KEY ("id_mealTime")
-);
-
--- CreateTable
 CREATE TABLE "MonitoringUnit" (
     "id_monitoringUnit" TEXT NOT NULL,
     "code_monitoring" TEXT NOT NULL,
@@ -111,17 +91,6 @@ CREATE TABLE "MonitoringUnit" (
 );
 
 -- CreateTable
-CREATE TABLE "Third" (
-    "id_third" TEXT NOT NULL,
-    "code_third" TEXT NOT NULL,
-    "name_third" TEXT NOT NULL,
-    "disabled_third" BOOLEAN NOT NULL DEFAULT false,
-    "construction_idConstruction" TEXT NOT NULL,
-
-    CONSTRAINT "Third_pkey" PRIMARY KEY ("id_third")
-);
-
--- CreateTable
 CREATE TABLE "Collaborator" (
     "id_collaborator" TEXT NOT NULL,
     "matriculation" TEXT NOT NULL,
@@ -129,21 +98,18 @@ CREATE TABLE "Collaborator" (
     "office_collaborator" TEXT NOT NULL,
     "disabled_collaborator" BOOLEAN NOT NULL DEFAULT false,
     "responsible" BOOLEAN NOT NULL,
-    "userId_user" TEXT NOT NULL,
+    "admission_date" TEXT NOT NULL DEFAULT '0000-00-00',
+    "resignation_date" TEXT,
+    "userId_user" TEXT,
     "constructionId_construction" TEXT NOT NULL,
 
     CONSTRAINT "Collaborator_pkey" PRIMARY KEY ("id_collaborator")
 );
 
 -- CreateTable
-CREATE TABLE "Snack" (
-    "id_snack" TEXT NOT NULL,
-    "date_snack" TIMESTAMP(3) NOT NULL,
-    "type_snack" TEXT NOT NULL,
-    "thirdId_third" TEXT NOT NULL,
-    "collaboratorId_collaborator" TEXT NOT NULL,
-
-    CONSTRAINT "Snack_pkey" PRIMARY KEY ("id_snack")
+CREATE TABLE "_CollaboratorToService" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
 );
 
 -- CreateIndex
@@ -153,34 +119,34 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Company_company_name_key" ON "Company"("company_name");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Construction_code_construction_key" ON "Construction"("code_construction");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Service_code_service_key" ON "Service"("code_service");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Third_code_third_key" ON "Third"("code_third");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Collaborator_matriculation_key" ON "Collaborator"("matriculation");
 
--- AddForeignKey
-ALTER TABLE "Company" ADD CONSTRAINT "Company_userId_user_fkey" FOREIGN KEY ("userId_user") REFERENCES "User"("id_user") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "_CollaboratorToService_AB_unique" ON "_CollaboratorToService"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_CollaboratorToService_B_index" ON "_CollaboratorToService"("B");
 
 -- AddForeignKey
-ALTER TABLE "Construction" ADD CONSTRAINT "Construction_userId_user_fkey" FOREIGN KEY ("userId_user") REFERENCES "User"("id_user") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_constructionId_construction_fkey" FOREIGN KEY ("constructionId_construction") REFERENCES "Construction"("id_construction") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Construction" ADD CONSTRAINT "Construction_companyId_company_fkey" FOREIGN KEY ("companyId_company") REFERENCES "Company"("id_company") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Service" ADD CONSTRAINT "Service_subFieldId_subField_fkey" FOREIGN KEY ("subFieldId_subField") REFERENCES "SubField"("id_subField") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Service" ADD CONSTRAINT "Service_gardenId_garden_fkey" FOREIGN KEY ("gardenId_garden") REFERENCES "Garden"("id_garden") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Service" ADD CONSTRAINT "Service_measurementId_measurement_fkey" FOREIGN KEY ("measurementId_measurement") REFERENCES "Measurement"("id_measurement") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Service" ADD CONSTRAINT "Service_constructionId_construction_fkey" FOREIGN KEY ("constructionId_construction") REFERENCES "Construction"("id_construction") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Service" ADD CONSTRAINT "Service_collaboratorId_collaborator_fkey" FOREIGN KEY ("collaboratorId_collaborator") REFERENCES "Collaborator"("id_collaborator") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Production" ADD CONSTRAINT "Production_userId_user_fkey" FOREIGN KEY ("userId_user") REFERENCES "User"("id_user") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -189,13 +155,13 @@ ALTER TABLE "Production" ADD CONSTRAINT "Production_userId_user_fkey" FOREIGN KE
 ALTER TABLE "Production" ADD CONSTRAINT "Production_serviceId_service_fkey" FOREIGN KEY ("serviceId_service") REFERENCES "Service"("id_service") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Collaborator" ADD CONSTRAINT "Collaborator_userId_user_fkey" FOREIGN KEY ("userId_user") REFERENCES "User"("id_user") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Collaborator" ADD CONSTRAINT "Collaborator_userId_user_fkey" FOREIGN KEY ("userId_user") REFERENCES "User"("id_user") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Collaborator" ADD CONSTRAINT "Collaborator_constructionId_construction_fkey" FOREIGN KEY ("constructionId_construction") REFERENCES "Construction"("id_construction") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Snack" ADD CONSTRAINT "Snack_thirdId_third_fkey" FOREIGN KEY ("thirdId_third") REFERENCES "Third"("id_third") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_CollaboratorToService" ADD CONSTRAINT "_CollaboratorToService_A_fkey" FOREIGN KEY ("A") REFERENCES "Collaborator"("id_collaborator") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Snack" ADD CONSTRAINT "Snack_collaboratorId_collaborator_fkey" FOREIGN KEY ("collaboratorId_collaborator") REFERENCES "Collaborator"("id_collaborator") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "_CollaboratorToService" ADD CONSTRAINT "_CollaboratorToService_B_fkey" FOREIGN KEY ("B") REFERENCES "Service"("id_service") ON DELETE CASCADE ON UPDATE CASCADE;

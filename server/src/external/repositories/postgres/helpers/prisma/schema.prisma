@@ -14,42 +14,27 @@ enum Role {
   ADMIN // system administrator
   ACCESS_ADMIN // matrix user 
   ACCESS_ADMIN_RDC // collaborator with admin access permission for the RDC
-  ACCESS_ADMIN_SNACK // collaborator with admin access permission for the SNACK
   ACCESS_FUNC_RDC // collaborator with employee access permission fot the RDC
-  ACCESS_FUNC_SNACK // collaborator with employee access permission fot the SNACK
-  ACCESS_VISITOR_SNACK // visitor with read access permission to SNACK
 }
 
 model User {
-  id_user                     String         @id @default(uuid())
-  username                    String         @unique
-  email                       String         @unique
-  password                    String
-  role                        Role
-  constructionId_construction String?
-  Construction                Construction?  @relation(fields: [constructionId_construction], references: [id_construction])
-  leader                      Collaborator[]
-  production                  Production[]
-  Company                     Company[]
-}
-
-model Company {
-  id_company   String         @id @default(uuid())
-  company_name String         @unique
-  jobs         Construction[]
-  users        User[]
+  id_user      String         @id @default(uuid())
+  username     String         @unique
+  email        String         @unique
+  password     String
+  role         Role
+  construction Construction[]
+  leader       Collaborator[]
+  production   Production[]
 }
 
 model Construction {
   id_construction   String         @id @default(uuid())
   code_construction String         @unique
   name_construction String
-  companyId_company String
   users             User[]
-  company_idCompany Company        @relation(fields: [companyId_company], references: [id_company])
   leader            Collaborator[]
   service           Service[]
-  Third             Third[]
 }
 
 model Garden {
@@ -105,28 +90,11 @@ model Production {
   createdAt            DateTime @default(now())
 }
 
-model MealTime {
-  id_mealTime String @id @default(uuid())
-  start_time  String // multiple by 100 or divide by 100
-  end_time    String // multiple by 100 or divide by 100
-  name        String
-}
-
 model MonitoringUnit {
   id_monitoringUnit String @id @default(uuid())
   code_monitoring   String
   name              String
   description       String
-}
-
-model Third {
-  id_third                    String       @id @default(uuid())
-  code_third                  String       @unique
-  name_third                  String
-  disabled_third              Boolean      @default(false)
-  constructionId_construction String
-  construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
-  snack                       Snack[]
 }
 
 model Collaborator {
@@ -136,22 +104,11 @@ model Collaborator {
   office_collaborator         String
   disabled_collaborator       Boolean      @default(false)
   responsible                 Boolean
-  admission_date              String       @default("00/00/0000")
+  admission_date              String       @default("0000-00-00")
   resignation_date            String?
   userId_user                 String?
   constructionId_construction String
-  snack                       Snack[]
   service                     Service[]
   user_idUser                 User?        @relation(fields: [userId_user], references: [id_user])
   construction_idConstruction Construction @relation(fields: [constructionId_construction], references: [id_construction])
-}
-
-model Snack {
-  id_snack                    String       @id @default(uuid())
-  date_snack                  DateTime
-  type_snack                  String
-  thirdId_third               String
-  collaboratorId_collaborator String
-  third_idThird               Third        @relation(fields: [thirdId_third], references: [id_third])
-  collaborator_idCollaborator Collaborator @relation(fields: [collaboratorId_collaborator], references: [id_collaborator])
 }
