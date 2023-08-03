@@ -14,7 +14,7 @@ const UserLists = lazy(() => import("./pages/User/UserLists"));
 const ConstructionLists = lazy(
   () => import("./pages/Construction/ConstructionLists")
 );
-const CompanyList = lazy(() => import("./pages/Company/CompanyList"));
+
 const CollabLists = lazy(() => import("./pages/Collaborator/CollabLists"));
 const FormElements = lazy(() => import("./pages/Form/FormElements"));
 const FormLayout = lazy(() => import("./pages/Form/FormLayout"));
@@ -56,14 +56,6 @@ export function Routing() {
             element={
               <Suspense fallback={<Loader />}>
                 <ConstructionLists />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/companys"
-            element={
-              <Suspense fallback={<Loader />}>
-                <CompanyList />
               </Suspense>
             }
           />
