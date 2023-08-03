@@ -4,12 +4,17 @@ import { useFormContext } from "react-hook-form";
 interface SwitcherOneProps {
   registers: any;
   identify: string;
+  status?: boolean;
 }
 
-export default function SwitcherOne({ registers, identify }: SwitcherOneProps) {
+export default function SwitcherOne({
+  registers,
+  identify,
+  status,
+}: SwitcherOneProps) {
   const { register } = useFormContext();
 
-  const [enabled, setEnabled] = useState<boolean>(false);
+  const [enabled, setEnabled] = useState<boolean>(status || false);
 
   return (
     <div className="align-center flex justify-center py-2.5">

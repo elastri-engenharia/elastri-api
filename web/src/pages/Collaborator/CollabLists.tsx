@@ -3,7 +3,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../services/api";
 
 import { Tables } from "../../components/Tables";
@@ -26,7 +26,7 @@ import {
   HiUserPlus,
   HiOutlineTrash,
   HiArrowDownTray,
-  HiOutlineEye,
+  HiOutlinePencilSquare,
   HiMiniMagnifyingGlass,
   HiTrash,
   HiOutlineDocumentArrowDown,
@@ -34,23 +34,43 @@ import {
 } from "react-icons/hi2";
 
 export default function CollabLists() {
+  const queryClient = useQueryClient();
+
   const methods = useForm<collaboratorFormData>({
     resolver: zodResolver(collaboratorFormSchema),
   });
 
   const [search, setSearch] = useState<string>("");
+  const [idCollaborator, setIdCollaborator] = useState<string>("");
   const [openMConfirmTrash, setOpenMConfirmTrash] = useState<boolean>(false);
-  const [openMForms, setOpenMForms] = useState<boolean>(false);
+  const [openMFormsCreated, setOpenMFormsCreated] = useState<boolean>(false);
+  const [openMFormsUpdated, setOpenMFormsUpdated] = useState<boolean>(false);
+  const [enableResponsible, setEnableResposible] = useState<boolean>(false);
+  const [enableDisabled, setEnableDisabled] = useState<boolean>(false);
 
-  const collaborator = useQuery(["AllCollaborators"], () =>
+  const collaborator = useQuery(["allCollaborators"], () =>
     api.get("collaborators").then((res) => res.data)
   );
 
-  const construction = useQuery(["AllConstruction"], () =>
+  const construction = useQuery(["allConstruction"], () =>
     api.get("constructions").then((res) => res.data)
   );
 
-  const handleTest = (value: any) => {
+  const createdCollaborator = useMutation(
+    (data) => api.post("collaborators/create", data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["allCollaborators"]);
+      },
+    }
+  );
+
+  const handleSubmitCreated = async (value: Collaborator) => {
+    await createdCollaborator.mutateAsync(value);
+    methods.reset();
+  };
+
+  const handleSubmitUpdated = (value: Collaborator) => {
     console.log(value);
     methods.reset();
   };
@@ -89,7 +109,7 @@ export default function CollabLists() {
             <div className="">
               <button
                 className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
-                onClick={() => setOpenMForms(true)}
+                onClick={() => setOpenMFormsCreated(true)}
               >
                 <HiUserPlus className="h-7 w-7 pr-2 font-medium text-white" />
                 Novo Colaborador
@@ -106,8 +126,10 @@ export default function CollabLists() {
             />
             <Tables.THContent item="Nome" className="min-w-[250px]" />
             <Tables.THContent item="Função" className="min-w-[120px]" />
-            <Tables.THContent item="Ativo" className="min-w-[80px]" />
-            <Tables.THContent item="Resp." className="min-w-[80px]" />
+            <Tables.THContent item="Data Admissão" className="min-w-[120px]" />
+            <Tables.THContent item="Data Demissão" className="min-w-[120px]" />
+            <Tables.THContent item="Desat?" className="min-w-[80px]" />
+            <Tables.THContent item="Resp?" className="min-w-[80px]" />
             <Tables.THContent item="Ações" />
           </Tables.THead>
           {collaborator.data?.collaborators
@@ -126,11 +148,47 @@ export default function CollabLists() {
                 <Tables.TBContent item={item.name_collaborator} />
                 <Tables.TBContent item={item.office_collaborator} />
                 <Tables.TBContent
-                  item={item.disabled_collaborator ? "Não" : "Sim"}
+                  item={item.admission_date.split("-").reverse().join("/")}
+                />
+                <Tables.TBContent
+                  item={
+                    item.resignation_date
+                      ? item.resignation_date.split("-").reverse().join("/")
+                      : "-"
+                  }
+                />
+                <Tables.TBContent
+                  item={item.disabled_collaborator ? "Sim" : "Não"}
                 />
                 <Tables.TBContent item={item.responsible ? "Sim" : "Não"} />
                 <Tables.TActions>
-                  <Tables.TAction icon={HiOutlineEye} />
+                  <Tables.TAction
+                    icon={HiOutlinePencilSquare}
+                    onClick={() => {
+                      setOpenMFormsUpdated(true);
+                      methods.setValue("matriculation", item.matriculation);
+                      methods.setValue(
+                        "name_collaborator",
+                        item.name_collaborator
+                      );
+                      methods.setValue(
+                        "office_collaborator",
+                        item.office_collaborator
+                      );
+                      methods.setValue(
+                        "construction_idConstruction",
+                        item.construction_idConstruction.id_construction
+                      );
+                      methods.setValue("admission_date", item.admission_date);
+                      methods.setValue(
+                        "resignation_date",
+                        item.resignation_date
+                      );
+                      setEnableResposible(item.responsible);
+                      setEnableDisabled(item.disabled_collaborator);
+                      setIdCollaborator(item.id_collaborator);
+                    }}
+                  />
                   <Tables.TAction
                     icon={HiOutlineTrash}
                     onClick={() => setOpenMConfirmTrash(true)}
@@ -160,17 +218,22 @@ export default function CollabLists() {
           </ModalsConfirmation.MBoby>
         </ModalsConfirmation.Root>
 
-        <ModalsForm.Root isOpen={openMForms}>
+        {/* Start Created */}
+        <ModalsForm.Root isOpen={openMFormsCreated}>
           <FormElements.Root>
             <FormElements.FHeader title="Create Collaborators" />
             <FormProvider {...methods}>
-              <FormElements.FBody onSubmit={methods.handleSubmit(handleTest)}>
+              <FormElements.FBody
+                onSubmit={methods.handleSubmit(handleSubmitCreated)}
+              >
                 <FormElements.FContainer>
                   <FormElements.FLabels title="Matrícula" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    registers="matriculation"
+                    isResponseError={createdCollaborator.isError}
+                    responseError={createdCollaborator.error}
                     placeholder="Insira a matrícula"
+                    registers="matriculation"
                   />
                 </FormElements.FContainer>
 
@@ -178,8 +241,10 @@ export default function CollabLists() {
                   <FormElements.FLabels title="Nome Colaborador" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    registers="name_collaborator"
+                    isResponseError={createdCollaborator.isError}
+                    responseError={createdCollaborator.error}
                     placeholder="Insira o nome do colaborador"
+                    registers="name_collaborator"
                   />
                 </FormElements.FContainer>
 
@@ -187,13 +252,15 @@ export default function CollabLists() {
                   <FormElements.FLabels title="Função" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    registers="office_collaborator"
+                    isResponseError={createdCollaborator.isError}
+                    responseError={createdCollaborator.error}
                     placeholder="Insira o nome do colaborador"
+                    registers="office_collaborator"
                   />
                 </FormElements.FContainer>
 
                 <FormElements.FContainer>
-                  <FormElements.FLabels title="Função" symbol="*" />
+                  <FormElements.FLabels title="Obra" symbol="*" />
                   <FormElements.FSelectSimpleContainer
                     registers="construction_idConstruction"
                     icon={HiOutlineBuildingOffice2}
@@ -202,39 +269,43 @@ export default function CollabLists() {
                       (item: Construction, index: number) => (
                         <FormElements.FSelectSimpleOption
                           placeholder="Selecione uma obra..."
-                          value={item.code_construction}
-                          text={item.name_construction}
+                          value={item.id_construction}
+                          option={item.name_construction}
                         />
                       )
                     )}
                   </FormElements.FSelectSimpleContainer>
                 </FormElements.FContainer>
 
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Responsável" />
-                  <SwitcherOne registers="responsible" identify="toggle1" />
-                </FormElements.FContainer>
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Data de Admissão" />
+                    <FormElements.FDate registers="admission_date" />
+                  </FormElements.FContainerDivider>
 
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Ativo" />
-                  <SwitcherOne
-                    registers="disabled_collaborator"
-                    identify="toggle2"
-                  />
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Data de Demissão" />
+                    <FormElements.FDate registers="resignation_date" />
+                  </FormElements.FContainerDivider>
                 </FormElements.FContainer>
+                {/* End Container for Divider */}
 
                 {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
-                {/* <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
                   <FormElements.FContainerDivider>
                     <FormElements.FLabels title="Responsável" />
-                    <SwitcherOne registers="responsible" />
+                    <SwitcherOne registers="responsible" identify="toggle1" />
                   </FormElements.FContainerDivider>
 
                   <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Ativar" />
-                    <SwitcherOne registers="disabled_collaborator" />
+                    <FormElements.FLabels title="Ativar/Desativar" />
+                    <SwitcherOne
+                      registers="disabled_collaborator"
+                      identify="toggle2"
+                    />
                   </FormElements.FContainerDivider>
-                </FormElements.FContainer> */}
+                </FormElements.FContainer>
                 {/* End Container for Divider */}
 
                 {/* Start Actions */}
@@ -242,7 +313,7 @@ export default function CollabLists() {
                   <FormElements.FAction
                     title="Voltar"
                     onClick={() => {
-                      setOpenMForms(false);
+                      setOpenMFormsCreated(false);
                       methods.reset();
                     }}
                   />
@@ -253,6 +324,120 @@ export default function CollabLists() {
             </FormProvider>
           </FormElements.Root>
         </ModalsForm.Root>
+        {/* End Created */}
+
+        {/* Start Updated */}
+        <ModalsForm.Root isOpen={openMFormsUpdated}>
+          <FormElements.Root>
+            <FormElements.FHeader title="Updated Collaborators" />
+            <FormProvider {...methods}>
+              <FormElements.FBody
+                onSubmit={methods.handleSubmit(handleSubmitUpdated)}
+              >
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Matrícula" symbol="*" />
+                  <FormElements.FInputs
+                    type="text"
+                    isResponseError={collaborator.isError}
+                    responseError={collaborator.error}
+                    placeholder="Insira a matrícula"
+                    registers="matriculation"
+                  />
+                </FormElements.FContainer>
+
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Nome Colaborador" symbol="*" />
+                  <FormElements.FInputs
+                    type="text"
+                    isResponseError={collaborator.isError}
+                    responseError={collaborator.error}
+                    placeholder="Insira o nome do colaborador"
+                    registers="name_collaborator"
+                  />
+                </FormElements.FContainer>
+
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Função" symbol="*" />
+                  <FormElements.FInputs
+                    type="text"
+                    isResponseError={collaborator.isError}
+                    responseError={construction.error}
+                    placeholder="Insira a função do colaborador"
+                    registers="office_collaborator"
+                  />
+                </FormElements.FContainer>
+
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Obras" symbol="*" />
+                  <FormElements.FSelectSimpleContainer
+                    registers="construction_idConstruction"
+                    icon={HiOutlineBuildingOffice2}
+                  >
+                    {construction.data?.constructions.map(
+                      (item: Construction, index: number) => (
+                        <FormElements.FSelectSimpleOption
+                          placeholder="Selecione uma obra..."
+                          value={item.id_construction}
+                          option={item.name_construction}
+                        />
+                      )
+                    )}
+                  </FormElements.FSelectSimpleContainer>
+                </FormElements.FContainer>
+
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Data de Admissão" />
+                    <FormElements.FDate registers="admission_date" />
+                  </FormElements.FContainerDivider>
+
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Data de Demissão" />
+                    <FormElements.FDate registers="resignation_date" />
+                  </FormElements.FContainerDivider>
+                </FormElements.FContainer>
+                {/* End Container for Divider */}
+
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Responsável" />
+                    <SwitcherOne
+                      registers="responsible"
+                      identify="toggle1"
+                      status={enableResponsible}
+                    />
+                  </FormElements.FContainerDivider>
+
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Ativar/Desativar" />
+                    <SwitcherOne
+                      registers="disabled_collaborator"
+                      identify="toggle2"
+                      status={enableDisabled}
+                    />
+                  </FormElements.FContainerDivider>
+                </FormElements.FContainer>
+                {/* End Container for Divider */}
+
+                {/* Start Actions */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FAction
+                    title="Voltar"
+                    onClick={() => {
+                      setOpenMFormsUpdated(false);
+                      methods.reset();
+                    }}
+                  />
+                  <FormElements.FAction title="Enviar" type="submit" />
+                </FormElements.FContainer>
+                {/* End Actions */}
+              </FormElements.FBody>
+            </FormProvider>
+          </FormElements.Root>
+        </ModalsForm.Root>
+        {/* End Updated */}
       </div>
     </>
   );

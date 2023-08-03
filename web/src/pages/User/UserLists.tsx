@@ -243,7 +243,7 @@ export default function UserLists() {
                     {roles.map((item: Role, index: number) => (
                       <FormElements.FSelectSimpleOption
                         placeholder="Selecione uma permissão..."
-                        text={item.value}
+                        option={item.value}
                       />
                     ))}
                   </FormElements.FSelectSimpleContainer>
@@ -320,7 +320,7 @@ export default function UserLists() {
                     {roles.map((item: Role, index: number) => (
                       <FormElements.FSelectSimpleOption
                         placeholder="Selecione uma permissão..."
-                        text={item.value}
+                        option={item.value}
                       />
                     ))}
                   </FormElements.FSelectSimpleContainer>

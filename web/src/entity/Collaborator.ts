@@ -5,8 +5,23 @@ export interface Collaborator {
   matriculation: string;
   name_collaborator: string;
   office_collaborator: string;
+  admission_date: string;
+  resignation_date?: string;
   disabled_collaborator: boolean;
   responsible: boolean;
+  construction_idConstruction: {
+    id_construction: string;
+    code_construction: string;
+    name_construction: string;
+    companyId_company: string;
+  };
+  user_idUser: {
+    id_user: string;
+    username: string;
+    email: string;
+    password: string;
+    role: string;
+  };
 }
 
 const regex = new RegExp(/^\d{1,10}$/);
@@ -22,9 +37,12 @@ export const collaboratorFormSchema = z.object({
     .string()
     .nonempty("Este campo é obrigatório.")
     .toUpperCase(),
+  admission_date: z.string().nonempty("Este campo é obrigatório."),
+  resignation_date: z.string().optional(),
   disabled_collaborator: z.boolean(),
   responsible: z.boolean(),
   construction_idConstruction: z.string(),
+  user_idUser: z.string().optional(),
 });
 
 export type collaboratorFormData = z.infer<typeof collaboratorFormSchema>;

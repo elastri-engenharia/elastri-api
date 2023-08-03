@@ -70,9 +70,9 @@ const FormElements = () => {
             </div>
             <div className="flex flex-col gap-5.5 p-6.5">
               {/* <SwitcherOne registers="" /> */}
-              <SwitcherTwo />
-              <SwitcherThree />
-              <SwitcherFour />
+              {/* <SwitcherTwo registers="asd" identify="ads" />
+              <SwitcherThree registers="dfdfd" identify="dfdfd" />
+              <SwitcherFour registers="gdgd" identify="gdgd" /> */}
             </div>
           </div>
 

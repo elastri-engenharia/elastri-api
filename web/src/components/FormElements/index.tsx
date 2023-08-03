@@ -2,6 +2,7 @@ import FormElementsAction from "./FormElementsAction";
 import FormElementsBody from "./FormElementsBody";
 import FormElementsContainer from "./FormElementsContainer";
 import FormElementsContainerDivider from "./FormElementsContainerDivider";
+import FormElementsDate from "./FormElementsDate";
 import FormElementsHeader from "./FormElementsHeader";
 import FormElementsInputsActive from "./FormElementsInputActive";
 import FormElementsInputsDisabled from "./FormElementsInputDisabled";
@@ -32,4 +33,5 @@ export const FormElements = {
   FTextArea: FormElementsTextArea,
   FTextAreaActive: FormElementsTextAreaActive,
   FTextAreaDisabled: FormElementsTextAreaDisabled,
+  FDate: FormElementsDate,
 };
