@@ -12,7 +12,7 @@ export default (router: Router) => {
     async (req, res) => {
       const constructions = await prisma.construction.findMany({
         include: {
-          company_idCompany: true,
+          users: true,
         },
       })
 
@@ -35,6 +35,9 @@ export default (router: Router) => {
         where: {
           id_construction,
         },
+        include: {
+          users: true,
+        },
       })
 
       return construction
@@ -48,8 +51,7 @@ export default (router: Router) => {
     auth,
     can(["ADMIN", "ACCESS_ADMIN"]),
     async (req, res) => {
-      const { code_construction, name_construction, company_idCompany } =
-        req.body
+      const { code_construction, name_construction } = req.body
 
       const constructionOrNotFound = await prisma.construction.findFirst({
         where: {
@@ -57,27 +59,13 @@ export default (router: Router) => {
         },
       })
 
-      const companyOrNotFound = await prisma.company.findFirst({
-        where: {
-          id_company: company_idCompany,
-        },
-      })
-
       if (constructionOrNotFound)
         return res.status(400).json({ message: "Construction already exists." })
-
-      if (!companyOrNotFound)
-        return res.status(400).json({ message: "Company not found." })
 
       const construction = await prisma.construction.create({
         data: {
           code_construction,
           name_construction,
-          company_idCompany: {
-            connect: {
-              id_company: company_idCompany,
-            },
-          },
         },
       })
 
@@ -94,8 +82,9 @@ export default (router: Router) => {
     async (req, res) => {
       const { id_construction } = req.params
 
-      const { code_construction, name_construction, company_idCompany } =
-        req.body
+      const { code_construction, name_construction, users } = req.body
+
+      console.log(users)
 
       const constructionIsInNotUse = await prisma.construction.findFirst({
         where: {
@@ -108,19 +97,10 @@ export default (router: Router) => {
         },
       })
 
-      const companyOrNotFound = await prisma.company.findFirst({
-        where: {
-          id_company: company_idCompany,
-        },
-      })
-
       if (constructionIsInNotUse)
         return res
           .status(400)
           .json({ message: "Sorry code_construction is in use." })
-
-      if (!companyOrNotFound)
-        return res.status(400).json({ message: "Company not found." })
 
       const updatedConstruction = await prisma.construction.update({
         where: {
@@ -129,10 +109,8 @@ export default (router: Router) => {
         data: {
           code_construction,
           name_construction,
-          company_idCompany: {
-            connect: {
-              id_company: company_idCompany,
-            },
+          users: {
+            set: users,
           },
         },
       })
