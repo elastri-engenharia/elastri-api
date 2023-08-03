@@ -17,7 +17,7 @@ export default (router: Router) => {
   router.get(
     "/users",
     auth,
-    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_ADMIN_SNACK"]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
       const users = await prisma.user.findMany()
 
@@ -28,14 +28,7 @@ export default (router: Router) => {
   router.post(
     "/users/create",
     auth,
-    can([
-      "ADMIN",
-      "ACCESS_ADMIN",
-      "ACCESS_ADMIN_RDC",
-      "ACCESS_ADMIN_SNACK",
-      "ACCESS_FUNC_RDC",
-      "ACCESS_FUNC_SNACK",
-    ]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
       const { username, email, password, role } = req.body
 
@@ -69,15 +62,7 @@ export default (router: Router) => {
   router.get(
     "/users/:id_user/user",
     auth,
-    can([
-      "ADMIN",
-      "ACCESS_ADMIN",
-      "ACCESS_ADMIN_RDC",
-      "ACCESS_ADMIN_SNACK",
-      "ACCESS_FUNC_RDC",
-      "ACCESS_FUNC_SNACK",
-      "ACCESS_VISITOR_SNACK",
-    ]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_FUNC_RDC"]),
     async (req, res) => {
       const { id_user } = req.params
 
@@ -96,15 +81,7 @@ export default (router: Router) => {
   router.put(
     "/users/:id_user/update",
     auth,
-    can([
-      "ADMIN",
-      "ACCESS_ADMIN",
-      "ACCESS_ADMIN_RDC",
-      "ACCESS_ADMIN_SNACK",
-      "ACCESS_FUNC_RDC",
-      "ACCESS_FUNC_SNACK",
-      "ACCESS_VISITOR_SNACK",
-    ]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_FUNC_RDC"]),
     async (req, res) => {
       const { id_user } = req.params
       const { username, email, password, role } = req.body
