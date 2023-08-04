@@ -7,7 +7,7 @@ export default (router: Router) => {
   router.get(
     "/collaborators",
     auth,
-    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_ADMIN_SNACK"]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
       const collaborators = await prisma.collaborator.findMany({
         include: {
@@ -24,7 +24,7 @@ export default (router: Router) => {
   router.get(
     "/collaborators/:id_collaborator/collaborator",
     auth,
-    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_ADMIN_SNACK"]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
       const { id_collaborator } = req.params
 
@@ -43,19 +43,24 @@ export default (router: Router) => {
   router.post(
     "/collaborators/create",
     auth,
-    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_ADMIN_SNACK"]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
+      let disabled_collaborator = false
+
       const {
         matriculation,
         name_collaborator,
         office_collaborator,
-        disabled_collaborator,
         responsible,
         admission_date,
         resignation_date,
         construction_idConstruction,
         user_idUser,
       } = req.body
+
+      resignation_date?.length
+        ? (disabled_collaborator = true)
+        : disabled_collaborator
 
       const collaboratorOrNotFound = await prisma.collaborator.findFirst({
         where: {
@@ -131,21 +136,25 @@ export default (router: Router) => {
   router.put(
     "/collaborators/:id_collaborator/update",
     auth,
-    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC", "ACCESS_ADMIN_SNACK"]),
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
       const { id_collaborator } = req.params
+      let disabled_collaborator = false
 
       const {
         matriculation,
         name_collaborator,
         office_collaborator,
-        disabled_collaborator,
         responsible,
         admission_date,
         resignation_date,
         construction_idConstruction,
         user_idUser,
       } = req.body
+
+      resignation_date?.length
+        ? (disabled_collaborator = true)
+        : disabled_collaborator
 
       const collaboratorIsInNotUse = await prisma.collaborator.findFirst({
         where: {
