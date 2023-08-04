@@ -3,6 +3,8 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { DevTool } from "@hookform/devtools";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../services/api";
 
@@ -38,6 +40,7 @@ export default function CollabLists() {
 
   const methods = useForm<collaboratorFormData>({
     resolver: zodResolver(collaboratorFormSchema),
+    mode: "onChange",
   });
 
   const [search, setSearch] = useState<string>("");
@@ -65,13 +68,22 @@ export default function CollabLists() {
     }
   );
 
+  const updatedCollaborator = useMutation(
+    (data) => api.put(`collaborators/${idCollaborator}/update`, data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["allCollaborators"]);
+      },
+    }
+  );
+
   const handleSubmitCreated = async (value: Collaborator) => {
     await createdCollaborator.mutateAsync(value);
     methods.reset();
   };
 
-  const handleSubmitUpdated = (value: Collaborator) => {
-    console.log(value);
+  const handleSubmitUpdated = async (value: Collaborator) => {
+    await updatedCollaborator.mutateAsync(value);
     methods.reset();
   };
 
@@ -338,8 +350,8 @@ export default function CollabLists() {
                   <FormElements.FLabels title="Matrícula" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    isResponseError={collaborator.isError}
-                    responseError={collaborator.error}
+                    isResponseError={updatedCollaborator.isError}
+                    responseError={updatedCollaborator.error}
                     placeholder="Insira a matrícula"
                     registers="matriculation"
                   />
@@ -349,8 +361,8 @@ export default function CollabLists() {
                   <FormElements.FLabels title="Nome Colaborador" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    isResponseError={collaborator.isError}
-                    responseError={collaborator.error}
+                    isResponseError={updatedCollaborator.isError}
+                    responseError={updatedCollaborator.error}
                     placeholder="Insira o nome do colaborador"
                     registers="name_collaborator"
                   />
@@ -360,8 +372,8 @@ export default function CollabLists() {
                   <FormElements.FLabels title="Função" symbol="*" />
                   <FormElements.FInputs
                     type="text"
-                    isResponseError={collaborator.isError}
-                    responseError={construction.error}
+                    isResponseError={updatedCollaborator.isError}
+                    responseError={updatedCollaborator.error}
                     placeholder="Insira a função do colaborador"
                     registers="office_collaborator"
                   />
@@ -435,6 +447,7 @@ export default function CollabLists() {
                 {/* End Actions */}
               </FormElements.FBody>
             </FormProvider>
+            <DevTool control={methods.control} />
           </FormElements.Root>
         </ModalsForm.Root>
         {/* End Updated */}

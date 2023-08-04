@@ -16,6 +16,10 @@ export default function SwitcherOne({
 
   const [enabled, setEnabled] = useState<boolean>(status || false);
 
+  const handleToggle = () => {
+    setEnabled((prevEnabled) => !prevEnabled);
+  };
+
   return (
     <div className="align-center flex justify-center py-2.5">
       <label
@@ -28,9 +32,8 @@ export default function SwitcherOne({
             type="checkbox"
             id={identify}
             className="sr-only"
-            onChange={() => {
-              setEnabled(!enabled);
-            }}
+            onChange={handleToggle}
+            checked={enabled}
           />
           <div className="block h-8 w-14 rounded-full bg-meta-9 dark:bg-[#5A616B]"></div>
           <div
