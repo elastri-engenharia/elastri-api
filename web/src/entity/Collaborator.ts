@@ -7,7 +7,7 @@ export interface Collaborator {
   office_collaborator: string;
   admission_date: string;
   resignation_date?: string;
-  disabled_collaborator: boolean;
+  disabled_collaborator?: boolean;
   responsible: boolean;
   construction_idConstruction: {
     id_construction: string;
@@ -39,7 +39,7 @@ export const collaboratorFormSchema = z.object({
     .toUpperCase(),
   admission_date: z.string().nonempty("Este campo é obrigatório."),
   resignation_date: z.string().optional(),
-  disabled_collaborator: z.boolean(),
+  disabled_collaborator: z.boolean().optional(),
   responsible: z.boolean(),
   construction_idConstruction: z.string(),
   user_idUser: z.string().optional(),

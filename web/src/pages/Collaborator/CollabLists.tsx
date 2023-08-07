@@ -3,8 +3,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { DevTool } from "@hookform/devtools";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../services/api";
 
@@ -138,10 +136,16 @@ export default function CollabLists() {
             />
             <Tables.THContent item="Nome" className="min-w-[250px]" />
             <Tables.THContent item="Função" className="min-w-[120px]" />
-            <Tables.THContent item="Data Admissão" className="min-w-[120px]" />
-            <Tables.THContent item="Data Demissão" className="min-w-[120px]" />
-            <Tables.THContent item="Desat?" className="min-w-[80px]" />
+            <Tables.THContent
+              item="Data Admissão"
+              className="min-w-[120px] text-center"
+            />
+            <Tables.THContent
+              item="Data Demissão"
+              className="min-w-[120px] text-center"
+            />
             <Tables.THContent item="Resp?" className="min-w-[80px]" />
+            <Tables.THContent item="Desat?" className="min-w-[80px]" />
             <Tables.THContent item="Ações" />
           </Tables.THead>
           {collaborator.data?.collaborators
@@ -160,19 +164,21 @@ export default function CollabLists() {
                 <Tables.TBContent item={item.name_collaborator} />
                 <Tables.TBContent item={item.office_collaborator} />
                 <Tables.TBContent
+                  className="text-center"
                   item={item.admission_date.split("-").reverse().join("/")}
                 />
                 <Tables.TBContent
+                  className="text-center"
                   item={
                     item.resignation_date
                       ? item.resignation_date.split("-").reverse().join("/")
                       : "-"
                   }
                 />
+                <Tables.TBContent item={item.responsible ? "Sim" : "Não"} />
                 <Tables.TBContent
                   item={item.disabled_collaborator ? "Sim" : "Não"}
                 />
-                <Tables.TBContent item={item.responsible ? "Sim" : "Não"} />
                 <Tables.TActions>
                   <Tables.TAction
                     icon={HiOutlinePencilSquare}
@@ -303,22 +309,14 @@ export default function CollabLists() {
                 </FormElements.FContainer>
                 {/* End Container for Divider */}
 
-                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
-                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
-                  <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Responsável" />
-                    <SwitcherOne registers="responsible" identify="toggle1" />
-                  </FormElements.FContainerDivider>
-
-                  <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Ativar/Desativar" />
-                    <SwitcherOne
-                      registers="disabled_collaborator"
-                      identify="toggle2"
-                    />
-                  </FormElements.FContainerDivider>
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Responsável" />
+                  <SwitcherOne
+                    registers="responsible"
+                    identify="toggle1"
+                    status={enableResponsible}
+                  />
                 </FormElements.FContainer>
-                {/* End Container for Divider */}
 
                 {/* Start Actions */}
                 <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
@@ -411,27 +409,14 @@ export default function CollabLists() {
                 </FormElements.FContainer>
                 {/* End Container for Divider */}
 
-                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
-                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
-                  <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Responsável" />
-                    <SwitcherOne
-                      registers="responsible"
-                      identify="toggle1"
-                      status={enableResponsible}
-                    />
-                  </FormElements.FContainerDivider>
-
-                  <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Ativar/Desativar" />
-                    <SwitcherOne
-                      registers="disabled_collaborator"
-                      identify="toggle2"
-                      status={enableDisabled}
-                    />
-                  </FormElements.FContainerDivider>
+                <FormElements.FContainer>
+                  <FormElements.FLabels title="Responsável" />
+                  <SwitcherOne
+                    registers="responsible"
+                    identify="toggle1"
+                    status={enableResponsible}
+                  />
                 </FormElements.FContainer>
-                {/* End Container for Divider */}
 
                 {/* Start Actions */}
                 <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
@@ -447,7 +432,6 @@ export default function CollabLists() {
                 {/* End Actions */}
               </FormElements.FBody>
             </FormProvider>
-            <DevTool control={methods.control} />
           </FormElements.Root>
         </ModalsForm.Root>
         {/* End Updated */}
