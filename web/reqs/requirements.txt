@@ -3,3 +3,4 @@ QueryKeys utilities
 allUsers            =>          /users
 allColaborators     =>          /collaborators
 allContructions     =>          /contructions
+allGenders          =>          /collaborators/gender

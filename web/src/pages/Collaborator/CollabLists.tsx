@@ -18,8 +18,10 @@ import { Construction } from "../../entity/Construction";
 
 import {
   Collaborator,
+  Gender,
   collaboratorFormData,
   collaboratorFormSchema,
+  genders,
 } from "../../entity/Collaborator";
 
 import {
@@ -32,6 +34,8 @@ import {
   HiOutlineDocumentArrowDown,
   HiOutlineBuildingOffice2,
 } from "react-icons/hi2";
+
+import { PiGenderIntersexBold } from "react-icons/pi";
 
 export default function CollabLists() {
   const queryClient = useQueryClient();
@@ -47,7 +51,6 @@ export default function CollabLists() {
   const [openMFormsCreated, setOpenMFormsCreated] = useState<boolean>(false);
   const [openMFormsUpdated, setOpenMFormsUpdated] = useState<boolean>(false);
   const [enableResponsible, setEnableResposible] = useState<boolean>(false);
-  const [enableDisabled, setEnableDisabled] = useState<boolean>(false);
 
   const collaborator = useQuery(["allCollaborators"], () =>
     api.get("collaborators").then((res) => res.data)
@@ -193,6 +196,8 @@ export default function CollabLists() {
                         "office_collaborator",
                         item.office_collaborator
                       );
+                      methods.setValue("city", item.city);
+                      methods.setValue("gender", item.gender);
                       methods.setValue(
                         "construction_idConstruction",
                         item.construction_idConstruction.id_construction
@@ -203,7 +208,6 @@ export default function CollabLists() {
                         item.resignation_date
                       );
                       setEnableResposible(item.responsible);
-                      setEnableDisabled(item.disabled_collaborator);
                       setIdCollaborator(item.id_collaborator);
                     }}
                   />
@@ -244,61 +248,99 @@ export default function CollabLists() {
               <FormElements.FBody
                 onSubmit={methods.handleSubmit(handleSubmitCreated)}
               >
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Matrícula" symbol="*" />
-                  <FormElements.FInputs
-                    type="text"
-                    isResponseError={createdCollaborator.isError}
-                    responseError={createdCollaborator.error}
-                    placeholder="Insira a matrícula"
-                    registers="matriculation"
-                  />
-                </FormElements.FContainer>
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider className="xl:w-1/3">
+                    <FormElements.FLabels title="Matrícula" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira a matrícula"
+                      registers="matriculation"
+                    />
+                  </FormElements.FContainerDivider>
 
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Nome Colaborador" symbol="*" />
-                  <FormElements.FInputs
-                    type="text"
-                    isResponseError={createdCollaborator.isError}
-                    responseError={createdCollaborator.error}
-                    placeholder="Insira o nome do colaborador"
-                    registers="name_collaborator"
-                  />
+                  <FormElements.FContainerDivider className="xl:w-2/3">
+                    <FormElements.FLabels title="Nome Colaborador" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira o nome do colaborador"
+                      registers="name_collaborator"
+                    />
+                  </FormElements.FContainerDivider>
                 </FormElements.FContainer>
-
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Função" symbol="*" />
-                  <FormElements.FInputs
-                    type="text"
-                    isResponseError={createdCollaborator.isError}
-                    responseError={createdCollaborator.error}
-                    placeholder="Insira o nome do colaborador"
-                    registers="office_collaborator"
-                  />
-                </FormElements.FContainer>
-
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Obra" symbol="*" />
-                  <FormElements.FSelectSimpleContainer
-                    registers="construction_idConstruction"
-                    icon={HiOutlineBuildingOffice2}
-                  >
-                    {construction.data?.constructions.map(
-                      (item: Construction, index: number) => (
-                        <FormElements.FSelectSimpleOption
-                          placeholder="Selecione uma obra..."
-                          value={item.id_construction}
-                          option={item.name_construction}
-                        />
-                      )
-                    )}
-                  </FormElements.FSelectSimpleContainer>
-                </FormElements.FContainer>
+                {/* End Container for Divider */}
 
                 {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
                 <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
                   <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Data de Admissão" />
+                    <FormElements.FLabels title="Função" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira a função do colaborador"
+                      registers="office_collaborator"
+                    />
+                  </FormElements.FContainerDivider>
+
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Cidade" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira o cidade"
+                      registers="city"
+                    />
+                  </FormElements.FContainerDivider>
+                </FormElements.FContainer>
+                {/* End Container for Divider */}
+
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider className="xl:w-3/4">
+                    <FormElements.FLabels title="Obra" symbol="*" />
+                    <FormElements.FSelectSimpleContainer
+                      registers="construction_idConstruction"
+                      icon={HiOutlineBuildingOffice2}
+                    >
+                      {construction.data?.constructions.map(
+                        (item: Construction, index: number) => (
+                          <FormElements.FSelectSimpleOption
+                            placeholder="Selecione uma obra..."
+                            value={item.id_construction}
+                            option={item.name_construction}
+                          />
+                        )
+                      )}
+                    </FormElements.FSelectSimpleContainer>
+                  </FormElements.FContainerDivider>
+
+                  <FormElements.FContainerDivider className="xl:w-1/4">
+                    <FormElements.FLabels title="Gênero" symbol="*" />
+                    <FormElements.FSelectSimpleContainer
+                      registers="gender"
+                      icon={PiGenderIntersexBold}
+                    >
+                      {genders.map((item: Gender, index: number) => (
+                        <FormElements.FSelectSimpleOption
+                          placeholder="Selecione o gênero..."
+                          option={item.value}
+                        />
+                      ))}
+                    </FormElements.FSelectSimpleContainer>
+                  </FormElements.FContainerDivider>
+                </FormElements.FContainer>
+                {/* End Container for Divider */}
+
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Data de Admissão" symbol="*" />
                     <FormElements.FDate registers="admission_date" />
                   </FormElements.FContainerDivider>
 
@@ -344,61 +386,99 @@ export default function CollabLists() {
               <FormElements.FBody
                 onSubmit={methods.handleSubmit(handleSubmitUpdated)}
               >
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Matrícula" symbol="*" />
-                  <FormElements.FInputs
-                    type="text"
-                    isResponseError={updatedCollaborator.isError}
-                    responseError={updatedCollaborator.error}
-                    placeholder="Insira a matrícula"
-                    registers="matriculation"
-                  />
-                </FormElements.FContainer>
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider className="xl:w-1/3">
+                    <FormElements.FLabels title="Matrícula" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira a matrícula"
+                      registers="matriculation"
+                    />
+                  </FormElements.FContainerDivider>
 
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Nome Colaborador" symbol="*" />
-                  <FormElements.FInputs
-                    type="text"
-                    isResponseError={updatedCollaborator.isError}
-                    responseError={updatedCollaborator.error}
-                    placeholder="Insira o nome do colaborador"
-                    registers="name_collaborator"
-                  />
+                  <FormElements.FContainerDivider className="xl:w-2/3">
+                    <FormElements.FLabels title="Nome Colaborador" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira o nome do colaborador"
+                      registers="name_collaborator"
+                    />
+                  </FormElements.FContainerDivider>
                 </FormElements.FContainer>
-
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Função" symbol="*" />
-                  <FormElements.FInputs
-                    type="text"
-                    isResponseError={updatedCollaborator.isError}
-                    responseError={updatedCollaborator.error}
-                    placeholder="Insira a função do colaborador"
-                    registers="office_collaborator"
-                  />
-                </FormElements.FContainer>
-
-                <FormElements.FContainer>
-                  <FormElements.FLabels title="Obras" symbol="*" />
-                  <FormElements.FSelectSimpleContainer
-                    registers="construction_idConstruction"
-                    icon={HiOutlineBuildingOffice2}
-                  >
-                    {construction.data?.constructions.map(
-                      (item: Construction, index: number) => (
-                        <FormElements.FSelectSimpleOption
-                          placeholder="Selecione uma obra..."
-                          value={item.id_construction}
-                          option={item.name_construction}
-                        />
-                      )
-                    )}
-                  </FormElements.FSelectSimpleContainer>
-                </FormElements.FContainer>
+                {/* End Container for Divider */}
 
                 {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
                 <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
                   <FormElements.FContainerDivider>
-                    <FormElements.FLabels title="Data de Admissão" />
+                    <FormElements.FLabels title="Função" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira a função do colaborador"
+                      registers="office_collaborator"
+                    />
+                  </FormElements.FContainerDivider>
+
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Cidade" symbol="*" />
+                    <FormElements.FInputs
+                      type="text"
+                      isResponseError={createdCollaborator.isError}
+                      responseError={createdCollaborator.error}
+                      placeholder="Insira o cidade"
+                      registers="city"
+                    />
+                  </FormElements.FContainerDivider>
+                </FormElements.FContainer>
+                {/* End Container for Divider */}
+
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider className="xl:w-3/4">
+                    <FormElements.FLabels title="Obra" symbol="*" />
+                    <FormElements.FSelectSimpleContainer
+                      registers="construction_idConstruction"
+                      icon={HiOutlineBuildingOffice2}
+                    >
+                      {construction.data?.constructions.map(
+                        (item: Construction, index: number) => (
+                          <FormElements.FSelectSimpleOption
+                            placeholder="Selecione uma obra..."
+                            value={item.id_construction}
+                            option={item.name_construction}
+                          />
+                        )
+                      )}
+                    </FormElements.FSelectSimpleContainer>
+                  </FormElements.FContainerDivider>
+
+                  <FormElements.FContainerDivider className="xl:w-1/4">
+                    <FormElements.FLabels title="Gênero" symbol="*" />
+                    <FormElements.FSelectSimpleContainer
+                      registers="gender"
+                      icon={PiGenderIntersexBold}
+                    >
+                      {genders.map((item: Gender, index: number) => (
+                        <FormElements.FSelectSimpleOption
+                          placeholder="Selecione o gênero..."
+                          option={item.value}
+                        />
+                      ))}
+                    </FormElements.FSelectSimpleContainer>
+                  </FormElements.FContainerDivider>
+                </FormElements.FContainer>
+                {/* End Container for Divider */}
+
+                {/* Start Container for Divider - Ex.: className="flex flex-col gap-6 xl:flex-row" */}
+                <FormElements.FContainer className="flex flex-col gap-6 xl:flex-row">
+                  <FormElements.FContainerDivider>
+                    <FormElements.FLabels title="Data de Admissão" symbol="*" />
                     <FormElements.FDate registers="admission_date" />
                   </FormElements.FContainerDivider>
 

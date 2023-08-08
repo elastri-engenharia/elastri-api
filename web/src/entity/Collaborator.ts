@@ -1,10 +1,18 @@
 import { z } from "zod";
 
+export interface Gender {
+  value: string;
+}
+
+export const genders = [{ value: "M" }, { value: "F" }];
+
 export interface Collaborator {
   id_collaborator: string;
   matriculation: string;
   name_collaborator: string;
   office_collaborator: string;
+  city: string;
+  gender: string;
   admission_date: string;
   resignation_date?: string;
   disabled_collaborator?: boolean;
@@ -37,6 +45,8 @@ export const collaboratorFormSchema = z.object({
     .string()
     .nonempty("Este campo é obrigatório.")
     .toUpperCase(),
+  city: z.string().nonempty("Este campo é obrigatório").toUpperCase(),
+  gender: z.string().nonempty("Este campo é obrigatório"),
   admission_date: z.string().nonempty("Este campo é obrigatório."),
   resignation_date: z.string().optional(),
   disabled_collaborator: z.boolean().optional(),
