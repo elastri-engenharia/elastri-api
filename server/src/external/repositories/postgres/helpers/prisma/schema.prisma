@@ -17,6 +17,11 @@ enum Role {
   ACCESS_FUNC_RDC // collaborator with employee access permission fot the RDC
 }
 
+enum Gender {
+  M
+  F
+}
+
 model User {
   id_user      String         @id @default(uuid())
   username     String         @unique
@@ -102,6 +107,8 @@ model Collaborator {
   matriculation               String       @unique
   name_collaborator           String
   office_collaborator         String
+  city                        String
+  gender                      Gender
   disabled_collaborator       Boolean      @default(false)
   responsible                 Boolean
   admission_date              String       @default("0000-00-00")
