@@ -1,9 +1,16 @@
 import { prisma } from "@/external/repositories/postgres/helpers"
 import can from "@/presentation/middleware/acl"
 import auth from "@/presentation/middleware/authentication"
+import { Gender } from "@prisma/client"
 import { Router } from "express"
 
 export default (router: Router) => {
+  router.get("/collaborators/gender", async (req, res) => {
+    const genders = Gender
+
+    return res.status(200).json({ genders })
+  })
+
   router.get(
     "/collaborators",
     auth,
@@ -51,6 +58,8 @@ export default (router: Router) => {
         matriculation,
         name_collaborator,
         office_collaborator,
+        city,
+        gender,
         responsible,
         admission_date,
         resignation_date,
@@ -86,6 +95,8 @@ export default (router: Router) => {
             matriculation,
             name_collaborator,
             office_collaborator,
+            city,
+            gender,
             disabled_collaborator,
             responsible,
             admission_date,
@@ -115,6 +126,8 @@ export default (router: Router) => {
           matriculation,
           name_collaborator,
           office_collaborator,
+          city,
+          gender,
           disabled_collaborator,
           responsible,
           admission_date,
@@ -145,6 +158,8 @@ export default (router: Router) => {
         matriculation,
         name_collaborator,
         office_collaborator,
+        city,
+        gender,
         responsible,
         admission_date,
         resignation_date,
@@ -190,6 +205,8 @@ export default (router: Router) => {
             matriculation,
             name_collaborator,
             office_collaborator,
+            city,
+            gender,
             disabled_collaborator,
             responsible,
             admission_date,
@@ -222,6 +239,8 @@ export default (router: Router) => {
           matriculation,
           name_collaborator,
           office_collaborator,
+          city,
+          gender,
           disabled_collaborator,
           responsible,
           admission_date,
