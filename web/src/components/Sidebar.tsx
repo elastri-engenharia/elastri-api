@@ -11,6 +11,8 @@ import {
   HiOutlineUser,
   HiOutlineWrenchScrewdriver,
   HiOutlineUserGroup,
+  HiMiniChevronDown,
+  HiOutlineMap,
 } from "react-icons/hi2";
 
 interface SidebarProps {
@@ -253,6 +255,85 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
               {/* <!-- Menu Item Collaborators --> */}
+
+              {/* <!-- Menu Item RDO --> */}
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname === "/rdo" || pathname.includes("rdo")
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      <NavLink
+                        to="#"
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          (pathname === "/rdo" || pathname.includes("rdo")) &&
+                          "bg-graydark dark:bg-meta-4"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          sidebarExpanded
+                            ? handleClick()
+                            : setSidebarExpanded(true);
+                        }}
+                      >
+                        <HiOutlineMap className="h-5 w-5" />
+                        RDO
+                        <HiMiniChevronDown
+                          className={`absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 fill-current ${
+                            open && "rotate-180"
+                          }`}
+                        />
+                      </NavLink>
+                      {/* <!-- Dropdown Menu Start --> */}
+                      <div
+                        className={`translate transform overflow-hidden ${
+                          !open && "hidden"
+                        }`}
+                      >
+                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
+                          <li>
+                            <NavLink
+                              to="/rdo/garden"
+                              className={({ isActive }) =>
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
+                              }
+                            >
+                              Garden
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/rdo/subfield"
+                              className={({ isActive }) =>
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
+                              }
+                            >
+                              SubField
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/rdo/measurement"
+                              className={({ isActive }) =>
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white " +
+                                (isActive && "!text-white")
+                              }
+                            >
+                              Measurement
+                            </NavLink>
+                          </li>
+                        </ul>
+                      </div>
+                      {/* <!-- Dropdown Menu End --> */}
+                    </React.Fragment>
+                  );
+                }}
+              </SidebarLinkGroup>
+              {/* <!-- Menu Item RDO --> */}
 
               {/* <!-- Menu Item Calendar --> */}
               <li>

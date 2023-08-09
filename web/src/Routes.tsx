@@ -16,6 +16,9 @@ const ConstructionLists = lazy(
 );
 
 const CollabLists = lazy(() => import("./pages/Collaborator/CollabLists"));
+const GardenLists = lazy(() => import("./pages/RDO/GardenLists"));
+const SubFieldLists = lazy(() => import("./pages/RDO/SubFieldLists"));
+const MeasurementLists = lazy(() => import("./pages/RDO/MeasurementLists"));
 const FormElements = lazy(() => import("./pages/Form/FormElements"));
 const FormLayout = lazy(() => import("./pages/Form/FormLayout"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -64,6 +67,30 @@ export function Routing() {
             element={
               <Suspense fallback={<Loader />}>
                 <CollabLists />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/rdo/garden"
+            element={
+              <Suspense fallback={<Loader />}>
+                <GardenLists />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/rdo/subfield"
+            element={
+              <Suspense fallback={<Loader />}>
+                <SubFieldLists />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/rdo/measurement"
+            element={
+              <Suspense fallback={<Loader />}>
+                <MeasurementLists />
               </Suspense>
             }
           />
