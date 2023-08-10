@@ -5,3 +5,4 @@ allColaborators     =>          /collaborators
 allContructions     =>          /contructions
 allSubfields        =>          /subfields
 allGardens          =>          /gardens
+allAreas            =>          /areas

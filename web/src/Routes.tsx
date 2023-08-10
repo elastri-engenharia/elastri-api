@@ -19,6 +19,7 @@ const CollabLists = lazy(() => import("./pages/Collaborator/CollabLists"));
 const GardenLists = lazy(() => import("./pages/RDO/GardenLists"));
 const SubFieldLists = lazy(() => import("./pages/RDO/SubFieldLists"));
 const MeasurementLists = lazy(() => import("./pages/RDO/MeasurementLists"));
+const AreaLists = lazy(() => import("./pages/RDO/AreaLists"));
 const FormElements = lazy(() => import("./pages/Form/FormElements"));
 const FormLayout = lazy(() => import("./pages/Form/FormLayout"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -91,6 +92,14 @@ export function Routing() {
             element={
               <Suspense fallback={<Loader />}>
                 <MeasurementLists />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/rdo/area"
+            element={
+              <Suspense fallback={<Loader />}>
+                <AreaLists />
               </Suspense>
             }
           />
