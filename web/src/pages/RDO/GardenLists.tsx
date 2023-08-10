@@ -16,7 +16,6 @@ import { Tables } from "../../components/Tables";
 import {
   HiArrowDownTray,
   HiMiniMagnifyingGlass,
-  HiOutlineDocumentArrowDown,
   HiOutlinePencilSquare,
   HiOutlineTrash,
   HiOutlineMap,
@@ -94,12 +93,6 @@ export default function GardenLists() {
             </div>
           </div>
           <div className="flex justify-between">
-            <div className="">
-              <button className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4">
-                <HiOutlineDocumentArrowDown className="h-7 w-7 pr-2 font-medium text-white" />
-                Importar Parque
-              </button>
-            </div>
             <div className="">
               <button
                 className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
