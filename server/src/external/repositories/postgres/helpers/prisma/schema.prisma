@@ -70,6 +70,7 @@ model Service {
   gardenId_garden             String
   measurementId_measurement   String
   subFieldId_subField         String?
+  areaId_area                 String?
   foreseen                    String
   advance                     String
   constructionId_construction String
@@ -80,6 +81,7 @@ model Service {
   collaborator_idCollaborator Collaborator[]
   disabled_service            Boolean        @default(false)
   production                  Production[]
+  Area                        Area?          @relation(fields: [areaId_area], references: [id_area])
 }
 
 model Production {
@@ -100,6 +102,12 @@ model MonitoringUnit {
   code_monitoring   String
   name              String
   description       String
+}
+
+model Area {
+  id_area String    @id @default(uuid())
+  name    String
+  service Service[]
 }
 
 model Collaborator {
