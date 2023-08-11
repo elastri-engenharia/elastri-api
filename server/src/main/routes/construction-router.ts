@@ -84,8 +84,6 @@ export default (router: Router) => {
 
       const { code_construction, name_construction, users } = req.body
 
-      console.log(users)
-
       const constructionIsInNotUse = await prisma.construction.findFirst({
         where: {
           NOT: {

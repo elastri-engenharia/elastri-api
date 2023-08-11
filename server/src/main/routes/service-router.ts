@@ -19,6 +19,7 @@ export default (router: Router) => {
           activity: true,
           garden: {
             select: {
+              id_garden: true,
               name: true,
             },
           },
@@ -32,6 +33,11 @@ export default (router: Router) => {
             select: {
               id_measurement: true,
               symbol: true,
+            },
+          },
+          Area: {
+            select: {
+              id_area: true,
             },
           },
           foreseen: true,
@@ -79,6 +85,7 @@ export default (router: Router) => {
           activity: true,
           garden: {
             select: {
+              id_garden: true,
               name: true,
             },
           },
@@ -92,6 +99,11 @@ export default (router: Router) => {
             select: {
               id_measurement: true,
               symbol: true,
+            },
+          },
+          Area: {
+            select: {
+              id_area: true,
             },
           },
           foreseen: true,
@@ -133,6 +145,7 @@ export default (router: Router) => {
         gardenId_garden,
         subFieldId_subField,
         measurementId_measurement,
+        areaId_area,
         foreseen,
         advance,
         constructionId_construction,
@@ -140,9 +153,34 @@ export default (router: Router) => {
         disabled_service,
       } = req.body
 
-      const verifySubField = subFieldId_subField
-        ? subFieldId_subField
-        : undefined
+      const data: {
+        code_service: string
+        name_service: string
+        code_totvs: string
+        activity: string
+        garden: { connect: { id_garden: string } }
+        subfield?: { connect: { id_subField: string } }
+        undMeasure: { connect: { id_measurement: string } }
+        Area?: { connect: { id_area: string } }
+        foreseen: string
+        advance: string
+        construction_idConstruction: { connect: { id_construction: string } }
+        collaborator_idCollaborator?: { connect: { id_collaborator: string } }
+        disabled_service: boolean
+      } = {
+        code_service,
+        name_service,
+        code_totvs,
+        activity,
+        garden: { connect: { id_garden: gardenId_garden } },
+        undMeasure: { connect: { id_measurement: measurementId_measurement } },
+        foreseen,
+        advance,
+        construction_idConstruction: {
+          connect: { id_construction: constructionId_construction },
+        },
+        disabled_service,
+      }
 
       const serviceOrNotFound = await prisma.service.findFirst({
         where: {
@@ -153,83 +191,24 @@ export default (router: Router) => {
       if (serviceOrNotFound)
         return res.status(400).json({ message: "Service already exists." })
 
-      if (typeof verifySubField === "undefined") {
-        const service = await prisma.service.create({
-          data: {
-            code_service,
-            name_service,
-            code_totvs,
-            activity,
-            garden: {
-              connect: {
-                id_garden: gardenId_garden,
-              },
-            },
-            undMeasure: {
-              connect: {
-                id_measurement: measurementId_measurement,
-              },
-            },
-            foreseen,
-            advance,
-            disabled_service,
-            collaborator_idCollaborator: {
-              connect: {
-                id_collaborator: collaborator_idCollaborator,
-              },
-            },
-            construction_idConstruction: {
-              connect: {
-                id_construction: constructionId_construction,
-              },
-            },
-          },
-        })
-
-        return service
-          ? res.status(201).json({ service })
-          : res.status(400).json({ message: "Unable to register service." })
+      if (subFieldId_subField?.length) {
+        data.subfield = { connect: { id_subField: subFieldId_subField } }
       }
 
-      const createdService = await prisma.service.create({
-        data: {
-          code_service,
-          name_service,
-          code_totvs,
-          activity,
-          garden: {
-            connect: {
-              id_garden: gardenId_garden,
-            },
-          },
-          subfield: {
-            connect: {
-              id_subField: subFieldId_subField,
-            },
-          },
-          undMeasure: {
-            connect: {
-              id_measurement: measurementId_measurement,
-            },
-          },
-          foreseen,
-          advance,
-          disabled_service,
-          collaborator_idCollaborator: {
-            connect: {
-              id_collaborator: collaborator_idCollaborator,
-            },
-          },
-          construction_idConstruction: {
-            connect: {
-              id_construction: constructionId_construction,
-            },
-          },
-        },
-      })
+      if (areaId_area?.length) {
+        data.Area = { connect: { id_area: areaId_area } }
+      }
 
-      return createdService
-        ? res.status(201).json({ createdService })
+      if (collaborator_idCollaborator?.length) {
+        data.collaborator_idCollaborator = {
+          connect: { id_collaborator: collaborator_idCollaborator },
+        }
+      }
+
+      const service = await prisma.service.create({ data })
+
+      return service
+        ? res.status(201).json({ service })
         : res.status(400).json({ message: "Unable to register service." })
     },
   )
