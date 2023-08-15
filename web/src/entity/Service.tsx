@@ -18,15 +18,18 @@ export interface Service {
     id_subField: string;
     name: string;
   };
-  areaId_area: string;
+  Area: {
+    id_area: string;
+    name: string;
+  };
   foreseen: string;
   advance: string;
-  constructionId_construction: {
+  construction_idConstruction: {
     id_construction: string;
     code_construction: string;
     name_construction: string;
   };
-  collaborator_idCollaborator: [
+  collaborator_idCollaborator?: [
     {
       id_collaborator: string;
       matriculation: string;
@@ -37,6 +40,8 @@ export interface Service {
   production: string;
 }
 
+const regex = new RegExp(/^[+-]?(\d+|\d{1,5}(\.\d{1,2})*)?$/);
+
 export const serviceFormSchema = z.object({
   code_service: z.string().toUpperCase().nonempty("Este campo é obrigatório."),
   name_service: z.string().toUpperCase().nonempty("Este campo é obrigatório."),
@@ -46,10 +51,10 @@ export const serviceFormSchema = z.object({
   measurementId_measurement: z.string().nonempty("Este campo é obrigatório."),
   subFieldId_subField: z.string().optional(),
   areaId_area: z.string().optional(),
-  foreseen: z.string().nonempty("Este campo é obrigatório."),
+  foreseen: z.string().regex(regex, "Este campo deve ser numérico."),
   advance: z.string().default("0"),
   constructionId_construction: z.string().nonempty("Este campo é obrigatório."),
-  collaborator_idCollaborator: z.string().nonempty("Este campo é obrigatório."),
+  collaborator_idCollaborator: z.array(z.string().optional()),
   disabled_service: z.boolean(),
   production: z.string().optional(),
 });

@@ -16,7 +16,6 @@ import { Tables } from "../../components/Tables";
 import {
   HiArrowDownTray,
   HiMiniMagnifyingGlass,
-  HiOutlineDocumentArrowDown,
   HiOutlinePencilSquare,
   HiOutlineTrash,
   HiArrowsPointingOut,
