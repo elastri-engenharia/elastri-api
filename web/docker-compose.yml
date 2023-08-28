@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  web:
+    image: node:alpine
+    container_name: elastri-web
+    restart: always
+    entrypoint: /bin/sh
+    ports:
+      - 5174:5174
+    working_dir: /usr/app/web
+    volumes:
+      - type: bind
+        source: ./
+        target: /usr/app/web
+    tty: true
