@@ -24,7 +24,7 @@ export interface Service {
   };
   foreseen: string;
   advance: string;
-  construction_idConstruction: {
+  constructionId_construction: {
     id_construction: string;
     code_construction: string;
     name_construction: string;
@@ -37,7 +37,7 @@ export interface Service {
     }
   ];
   disabled_service: boolean;
-  production: string;
+  production?: string;
 }
 
 const regex = new RegExp(/^[+-]?(\d+|\d{1,5}(\.\d{1,2})*)?$/);
@@ -54,7 +54,7 @@ export const serviceFormSchema = z.object({
   foreseen: z.string().regex(regex, "Este campo deve ser numérico."),
   advance: z.string().default("0"),
   constructionId_construction: z.string().nonempty("Este campo é obrigatório."),
-  collaborator_idCollaborator: z.array(z.string().optional()),
+  collaborator_idCollaborator: z.array(z.string()).optional(),
   disabled_service: z.boolean(),
   production: z.string().optional(),
 });

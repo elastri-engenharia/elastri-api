@@ -90,9 +90,8 @@ export default function ServiceLists() {
     }
   );
 
-  const handleSubmitCreated = (value: Service) => {
-    console.log(value);
-    // await createdService.mutateAsync(value);
+  const handleSubmitCreated = async (value: Service) => {
+    await createdService.mutateAsync(value);
     methods.reset();
   };
 

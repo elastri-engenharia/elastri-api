@@ -392,8 +392,8 @@ export default function CollabLists() {
                     <FormElements.FLabels title="Matrícula" symbol="*" />
                     <FormElements.FInputs
                       type="text"
-                      isResponseError={createdCollaborator.isError}
-                      responseError={createdCollaborator.error}
+                      isResponseError={updatedCollaborator.isError}
+                      responseError={updatedCollaborator.error}
                       placeholder="Insira a matrícula"
                       registers="matriculation"
                     />
@@ -403,8 +403,8 @@ export default function CollabLists() {
                     <FormElements.FLabels title="Nome Colaborador" symbol="*" />
                     <FormElements.FInputs
                       type="text"
-                      isResponseError={createdCollaborator.isError}
-                      responseError={createdCollaborator.error}
+                      isResponseError={updatedCollaborator.isError}
+                      responseError={updatedCollaborator.error}
                       placeholder="Insira o nome do colaborador"
                       registers="name_collaborator"
                     />
@@ -418,8 +418,8 @@ export default function CollabLists() {
                     <FormElements.FLabels title="Função" symbol="*" />
                     <FormElements.FInputs
                       type="text"
-                      isResponseError={createdCollaborator.isError}
-                      responseError={createdCollaborator.error}
+                      isResponseError={updatedCollaborator.isError}
+                      responseError={updatedCollaborator.error}
                       placeholder="Insira a função do colaborador"
                       registers="office_collaborator"
                     />
@@ -429,8 +429,8 @@ export default function CollabLists() {
                     <FormElements.FLabels title="Cidade" symbol="*" />
                     <FormElements.FInputs
                       type="text"
-                      isResponseError={createdCollaborator.isError}
-                      responseError={createdCollaborator.error}
+                      isResponseError={updatedCollaborator.isError}
+                      responseError={updatedCollaborator.error}
                       placeholder="Insira o cidade"
                       registers="city"
                     />
