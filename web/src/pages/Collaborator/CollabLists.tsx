@@ -36,6 +36,7 @@ import {
 } from "react-icons/hi2";
 
 import { PiGenderIntersexBold } from "react-icons/pi";
+import Loader from "../../common/Loader";
 
 export default function CollabLists() {
   const queryClient = useQueryClient();
@@ -60,14 +61,14 @@ export default function CollabLists() {
     api.get("constructions").then((res) => res.data)
   );
 
-  const createdCollaborator = useMutation(
-    (data) => api.post("collaborators/create", data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["allCollaborators"]);
-      },
-    }
-  );
+  const fileUpload = async (selectedFile) => {
+    const formData = new FormData();
+    formData.append("importCollaborator", selectedFile);
+
+    const response = await api.post("collaborators/import", formData);
+
+    return response.data;
+  };
 
   const updatedCollaborator = useMutation(
     (data) => api.put(`collaborators/${idCollaborator}/update`, data),
@@ -78,6 +79,17 @@ export default function CollabLists() {
     }
   );
 
+  const createdCollaborator = useMutation(
+    (data) => api.post("collaborators/create", data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["allCollaborators"]);
+      },
+    }
+  );
+
+  const { mutateAsync, isLoading, isError } = useMutation(fileUpload);
+
   const handleSubmitCreated = async (value: Collaborator) => {
     await createdCollaborator.mutateAsync(value);
     methods.reset();
@@ -87,6 +99,18 @@ export default function CollabLists() {
     await updatedCollaborator.mutateAsync(value);
     methods.reset();
   };
+
+  const handleFileUpload = async (event) => {
+    const selectedFile = event.target.files[0];
+
+    await mutateAsync(selectedFile);
+
+    await queryClient.invalidateQueries(["allCollaborators"]);
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -114,10 +138,21 @@ export default function CollabLists() {
           </div>
           <div className="flex justify-between">
             <div className="">
-              <button className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4">
+              <input
+                type="file"
+                id="fileInput"
+                accept=".xls, .xlsx"
+                style={{ display: "none" }}
+                onChange={handleFileUpload}
+              />
+              <label
+                htmlFor="fileInput"
+                className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
+              >
                 <HiOutlineDocumentArrowDown className="h-7 w-7 pr-2 font-medium text-white" />
                 Importar Colaboradores
-              </button>
+              </label>
+              {isError && <p>Ocorreu um erro ao importar o colaborador.</p>}
             </div>
             <div className="">
               <button
