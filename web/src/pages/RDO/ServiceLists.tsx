@@ -41,6 +41,7 @@ import {
 } from "react-icons/hi2";
 
 import { DevTool } from "@hookform/devtools";
+import Loader from "../../common/Loader";
 
 export default function ServiceLists() {
   const queryClient = useQueryClient();
@@ -81,6 +82,15 @@ export default function ServiceLists() {
     api.get("constructions").then((res) => res.data)
   );
 
+  const fileUpload = async (selectedFile) => {
+    const formData = new FormData();
+    formData.append("importService", selectedFile);
+
+    const response = await api.post("services/import", formData);
+
+    return response.data;
+  };
+
   const createdService = useMutation(
     (data) => api.post("services/create", data),
     {
@@ -89,6 +99,8 @@ export default function ServiceLists() {
       },
     }
   );
+
+  const { mutateAsync, isLoading, isError } = useMutation(fileUpload);
 
   const handleSubmitCreated = async (value: Service) => {
     await createdService.mutateAsync(value);
@@ -99,6 +111,18 @@ export default function ServiceLists() {
     console.log("update", value);
     methods.reset();
   };
+
+  const handleFileUpload = async (event) => {
+    const selectedFile = event.target.files[0];
+
+    await mutateAsync(selectedFile);
+
+    await queryClient.invalidateQueries(["allServices"]);
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -126,10 +150,21 @@ export default function ServiceLists() {
           </div>
           <div className="flex justify-between">
             <div className="">
-              <button className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4">
+              <input
+                type="file"
+                id="fileInput"
+                accept=".xls, .xlsx"
+                style={{ display: "none" }}
+                onChange={handleFileUpload}
+              />
+              <label
+                htmlFor="fileInput"
+                className="border-blue-700 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-2 inline-flex items-center rounded-lg border bg-primary px-3 py-2.5 text-sm font-medium text-white hover:bg-primary focus:outline-none focus:ring-4"
+              >
                 <HiOutlineDocumentArrowDown className="h-7 w-7 pr-2 font-medium text-white" />
                 Importar Serviços
-              </button>
+              </label>
+              {isError && <p>Ocorreu um erro ao importar os serviços.</p>}
             </div>
             <div className="">
               <button
@@ -164,7 +199,8 @@ export default function ServiceLists() {
               return search.toLowerCase() === ""
                 ? item
                 : item.name_service.toLowerCase().includes(search) ||
-                    item.activity.toLowerCase().includes(search);
+                    item.activity.toLowerCase().includes(search) ||
+                    item.code_service.toLowerCase().includes(search);
             })
             .map((item: Service, index: number) => (
               <Tables.TBody key={index}>
@@ -181,7 +217,7 @@ export default function ServiceLists() {
                 />
                 <Tables.TBContent
                   className="text-center"
-                  item={item.Area ? item.Area.id_area : "-"}
+                  item={item.Area ? item.Area.name : "-"}
                 />
                 <Tables.TBContent
                   className="text-center"
@@ -199,9 +235,6 @@ export default function ServiceLists() {
                     icon={HiOutlinePencilSquare}
                     onClick={() => {
                       setOpenMFormsUpdated(true);
-                      console.log(
-                        item.construction_idConstruction.id_construction
-                      );
                       methods.setValue("code_service", item.code_service);
                       methods.setValue("name_service", item.name_service);
                       methods.setValue("code_totvs", item.code_totvs);

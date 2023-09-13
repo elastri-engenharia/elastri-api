@@ -286,6 +286,8 @@ export default (router: Router) => {
   router.post(
     "/collaborators/import",
     multerConfig.single("importCollaborator"),
+    auth,
+    can(["ADMIN", "ACCESS_ADMIN", "ACCESS_ADMIN_RDC"]),
     async (req, res) => {
       const { file } = req
 
